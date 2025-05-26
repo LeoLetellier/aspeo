@@ -1,0 +1,18 @@
+# ASPEO PARAMETER FILE V0.0.1
+[aspeo]
+name = "Name"
+description = "Desc"
+output = "Out"
+
+[[source]]
+id = "id src"
+mp = "path mp"
+#prefix
+#suffix
+#camera
+#raw
+
+[stereo]
+pairs = "pairs.txt"
+
+[stereo.asp]

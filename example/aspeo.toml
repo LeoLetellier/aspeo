@@ -1,0 +1,35 @@
+# ASPeo PARAMETER FILE V0.0.1
+[aspeo]
+name = "Name"
+description = "Desc"
+output = "Out"
+
+[[source]]
+id = "20250526"
+mp = "img1"
+#prefix for "prefix + id + suffix"
+#suffix
+#camera
+#raw
+
+[[source]]
+id = "20210526"
+mp = "img2"
+
+[stereo]
+pairs = "example/pairs.txt"
+
+[stereo.cmd]
+t = "pinhole"
+individually-normalize = true
+alignment-method = "none"
+threads-multiprocess = 5
+process = 5
+no-bigtiff = true
+tif-compress = "Deflate"
+corr-kernel = [21, 21]
+cost-mode = 2
+stereo-algorithm = "asp_bm"
+subpixel-mode = 2
+subpixel-kernel = [35, 35]
+stop-point = 5

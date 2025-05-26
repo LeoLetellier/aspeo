@@ -6,7 +6,9 @@ import subprocess
 BLACK_LEFT = os.path.join(os.path.dirname(__file__), "assets", "black_left.tsai")
 BLACK_RIGHT = os.path.join(os.path.dirname(__file__), "assets", "black_right.tsai")
 
-def parse_toml(file):
+
+def parse_toml(file: str) -> dict:
+    """Open a toml file as a dict"""
     with open(file, "rb") as f:
         toml = tomli.load(f)
     return toml
@@ -25,11 +27,13 @@ def sh(cmd: str, shell=True):
     ````
 
     """
-    subprocess.run(cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ)
+    subprocess.run(
+        cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
+    )
 
 
 def arg_to_str(arg) -> str:
-    """
+    """Resolve an argument into a string representation
     [10, 10] > "10 10"
     [var1, var2] > "str(var1) str(var2)"
     var > str(var)
@@ -45,7 +49,8 @@ def arg_to_str(arg) -> str:
     return ""
 
 
-def format_arg(key, value) -> str:
+def format_arg(key: str, value) -> str:
+    """Format a key/value couple into a command option"""
     prefix = "--" if len(key) > 1 else "-"
     # sep = " " if len(key) > 1 else " "
     if type(value) is bool:
@@ -58,6 +63,7 @@ def format_arg(key, value) -> str:
 
 
 def format_dict(dic: dict) -> str:
+    """Format all dict into command options"""
     params = ""
     for key, value in dic.items():
         params += format_arg(key, value) + " "
@@ -65,13 +71,15 @@ def format_dict(dic: dict) -> str:
 
 
 def stereo(images: list, cameras: list, output: str, parameters: dict, debug=False):
+    """Launch a parallel_stereo (ASP) based on a parameter dict
+
+    If debug is used, print the command without launching it. Useful to show the command
+    even without the ASP binaries available
+    """
     params = format_dict(parameters["stereo"]["cmd"])
 
     cmd = "parallel_stereo {} {} {} {}".format(
-        arg_to_str(images),
-        arg_to_str(cameras),
-        arg_to_str(output),
-        arg_to_str(params)
+        arg_to_str(images), arg_to_str(cameras), arg_to_str(output), arg_to_str(params)
     )
 
     if debug:

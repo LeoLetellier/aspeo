@@ -3,31 +3,29 @@
 name = "Name"
 description = "Desc"
 output = "."
-src = "pleiades"
 
 [[source]]
-id = "id src"
-mp = "path mp"
-#prefix
-#suffix
-#camera
-#raw
+id = "date"
+# mp = "path mp"
+prefix = "folder"
+suffix = ".tif"
+# camera
+# raw
 
 [stereo]
 pairs = "pairs.txt"
 
-[stereo.asp]
 [stereo.cmd]
-t = "pinhole"
+t = "nadirpinhole"
 individually-normalize = true
 alignment-method = "none"
 threads-multiprocess = 5
 process = 5
 no-bigtiff = true
 tif-compress = "Deflate"
-corr-kernel = [21, 21]
-cost-mode = 2
-stereo-algorithm = "asp_bm"
-subpixel-mode = 2
-subpixel-kernel = [35, 35]
+corr-kernel = [9, 9]
+cost-mode = 3
+stereo-algorithm = "asp_mgm_final"
+subpixel-mode = 11
+subpixel-kernel = [5, 5]
 stop-point = 5

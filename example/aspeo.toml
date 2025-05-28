@@ -3,18 +3,19 @@
 name = "Name"
 description = "Desc"
 output = "Out"
+src_prefix = "pp_"
+src_suffix = "_ss.tif"
 
 [[source]]
 id = "20250526"
-mp = "img1"
-#prefix for "prefix + id + suffix"
-#suffix
-#camera
+#mp = "img1"
+cam = "1.DIM"
 #raw
 
 [[source]]
 id = "20210526"
 mp = "img2"
+# cam = "2.DIM"
 
 [stereo]
 pairs = "example/pairs.txt"

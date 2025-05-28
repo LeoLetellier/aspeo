@@ -90,9 +90,9 @@ def stereo(images: list, cameras: list, output: str, parameters: dict, debug=Fal
 
 def corr_eval(left, right, disp, output, parameters: dict, debug=False):
     """Launch a corr_eval (ASP) to evaluate the ncc of a stereo result"""
-    params = format_dict(parameters.get("corr_eval", {}).get("cmd", {}))
+    params = format_dict(parameters.get("corr-eval", {}).get("cmd", {}))
 
-    cmd = "corr_eval {} {} {} {} {}".format(params, left, right, disp, output)
+    cmd = "corr_eval {} {} {} {} {}".format(params, left, right, disp, output)
 
     if debug:
         print(cmd)

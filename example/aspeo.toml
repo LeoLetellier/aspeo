@@ -14,14 +14,14 @@ cam = "1.DIM"
 
 [[source]]
 id = "20210526"
-mp = "img2"
+#mp = "img2"
 # cam = "2.DIM"
 
 [stereo]
 pairs = "example/pairs.txt"
 
 [stereo.cmd]
-t = "pinhole"
+session-type = "pinhole"
 individually-normalize = true
 alignment-method = "none"
 threads-multiprocess = 5

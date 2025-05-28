@@ -12,7 +12,7 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import stereo, parse_toml, BLACK_LEFT, BLACK_RIGHT
+from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT
 import os
 import docopt
 
@@ -60,6 +60,16 @@ def fetch_sources(params: dict):
     return dates, mp, cams
 
 
+def corr_eval_ncc(stereo_output: list, params: dict, debug=False):
+    """NCC correlation evaluation for each stereo pair"""
+    for o in stereo_output:
+        left = o + "L.tif"
+        right = o + "R.tif"
+        disp = o + "F.tif"
+        output = o + "NCC.tif"
+        corr_eval(left, right, disp, output, params, debug=debug)
+
+
 def pixel_tracking(params: dict, debug=False):
     """Pixel tracking sequence using stereo"""
     pairs_file = params["stereo"]["pairs"]
@@ -67,10 +77,15 @@ def pixel_tracking(params: dict, debug=False):
 
     dates, mp, cams = fetch_sources(params)
     img_pairs, date_pairs, cam_pairs = make_pairs(pairs_file, dates, mp, cams)
+    outputs = []
 
     for p, d, c in zip(img_pairs, date_pairs, cam_pairs):
         output = os.path.join(output_dir, d[0] + "_" + d[1] + "/pt")
         stereo(p, c, output, params, debug=debug)
+        outputs.append(output)
+
+    if params.get("corr_eval", None) is not None:
+        corr_eval_ncc(outputs, params, debug=debug)
 
 
 if __name__ == "__main__":

@@ -34,3 +34,5 @@ stereo-algorithm = "asp_bm"
 subpixel-mode = 2
 subpixel-kernel = [35, 35]
 stop-point = 5
+
+[corr-eval]

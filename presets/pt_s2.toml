@@ -3,14 +3,13 @@
 name = "Name"
 description = "Desc"
 output = "."
+# src_prefix =
+# src_suffix =
 
 [[source]]
 id = "date"
-# mp = "path mp"
-prefix = "folder"
-suffix = ".tif"
-# camera
-# raw
+mp = "mp.tif"
+# camera =
 
 [stereo]
 pairs = "pairs.txt"
@@ -29,3 +28,5 @@ stereo-algorithm = "asp_mgm_final"
 subpixel-mode = 11
 subpixel-kernel = [5, 5]
 stop-point = 5
+
+[corr-eval]

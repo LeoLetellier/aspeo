@@ -79,8 +79,20 @@ def stereo(images: list, cameras: list, output: str, parameters: dict, debug=Fal
     params = format_dict(parameters["stereo"]["cmd"])
 
     cmd = "parallel_stereo {} {} {} {}".format(
-        arg_to_str(images), arg_to_str(cameras), arg_to_str(output), arg_to_str(params)
+        arg_to_str(images), arg_to_str(cameras), arg_to_str(output), params
     )
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def corr_eval(left, right, disp, output, parameters: dict, debug=False):
+    """Launch a corr_eval (ASP) to evaluate the ncc of a stereo result"""
+    params = format_dict(parameters.get("corr_eval", {}).get("cmd", {}))
+
+    cmd = "corr_eval {} {} {} {} {}".format(params, left, right, disp, output)
 
     if debug:
         print(cmd)

@@ -3,6 +3,7 @@
 name = "Name"
 description = "Desc"
 output = "Out"
+# could add src_path to have another prefix
 src_prefix = "pp_"
 src_suffix = "_ss.tif"
 

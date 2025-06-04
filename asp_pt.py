@@ -3,6 +3,12 @@
 """
 Pixel Tracking Sequence (based on Ames Stereo Pipeline)
 
+Need from the parameter file:
+* sources: ideally map-projected images
+* stereo > pairs: text list of pairs to process (one pair per line, space separated id)
+* stereo > cmd: parameters needed by the stereo command
+* corr-eval: add to compute the normalized cross-correlation (ncc metric)
+
 Usage:
     asp_pt.py <toml> [--debug]
     asp_pt.py -h | --help

@@ -11,7 +11,7 @@ from asp import parse_toml
 import os
 import docopt
 
-PROJECT = parse_toml(os.path.join(os.path.dirname(__file__), "pyproject.toml"))
+PROJECT = parse_toml(os.path.join(os.path.dirname(__file__), "../pyproject.toml"))
 VERSION = PROJECT["project"]["version"]
 
 if __name__ == "__main__":

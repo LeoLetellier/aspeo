@@ -1,0 +1,36 @@
+# ASPEO PARAMETER FILE V0.0.1
+[aspeo]
+name = "Name"
+description = "Desc"
+output = "./CORREL/"
+src_folder = "./GEOTIFF/"
+# src_prefix = ""
+src_suffix = ".VV.mod_log.tif"
+
+[[source]]
+id = "20210526"
+
+[[source]]
+id = "20250526"
+
+[stereo]
+pairs = "./example/pairs.txt"
+
+[stereo.cmd]
+t = "pinhole"
+alignment-method = "none"
+threads-multiprocess = 5
+process = 5
+corr-kernel = [9, 9]
+cost-mode = 4
+stereo-algorithm = "asp_mgm_final"
+subpixel-mode = 4
+subpixel-kernel = [75, 75]
+sgm-collar-size = 512
+corr-search = [-10, -10, 10, 10]
+corr-blob-filter = 3
+prefilter-mode = 1
+prefilter-kernel-width = 35
+stop-point = 5
+
+[corr-eval]

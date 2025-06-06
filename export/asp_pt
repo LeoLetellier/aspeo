@@ -3,4 +3,4 @@
 FOLDER="$(dirname "$0")"
 PARENT="$(dirname "$FOLDER")"
 
-python3 "$PARENT"/asp_pt.py "$@"
+python3 "$PARENT"/src/asp_pt.py "$@"

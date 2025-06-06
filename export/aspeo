@@ -3,4 +3,4 @@
 FOLDER="$(dirname "$0")"
 PARENT="$(dirname "$FOLDER")"
 
-python3 "$PARENT"/aspeo.py "$@"
+python3 "$PARENT"/src/aspeo.py "$@"

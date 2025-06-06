@@ -3,7 +3,9 @@
 name = "Name"
 description = "Desc"
 output = "Out"
-# could add src_path to have another prefix
+# Common folder for all source files
+src_folder = "source_folder"
+# Common prefix/suffix for all source images
 src_prefix = "pp_"
 src_suffix = "_ss.tif"
 
@@ -16,7 +18,7 @@ cam = "1.DIM"
 [[source]]
 id = "20210526"
 #mp = "img2"
-# cam = "2.DIM"
+cam = "2.DIM"
 
 [stereo]
 pairs = "example/pairs.txt"

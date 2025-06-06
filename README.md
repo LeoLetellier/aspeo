@@ -32,6 +32,9 @@ NCC metric can be generated at the end of the run by specifying `[corr-eval]` in
 
 WORK IN PROGRESS
 
+## Map-projection
+
+WORK IN PROGRESS
 
 ## Adding the scripts to path
 

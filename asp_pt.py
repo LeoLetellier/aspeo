@@ -48,20 +48,19 @@ def fetch_sources(params: dict):
     cams = []
     prefix = params["aspeo"].get("src_prefix", "")
     suffix = params["aspeo"].get("src_suffix", "")
+    src_folder = params["aspeo"].get("src_folder", "")
     for s in sources:
-        d = s["id"]
-        m = s.get("mp", None)
+        id = s["id"]
+        m = s.get("mp", id)
         c = s.get("cam", None)
-        if m is None:
-            m = d
-        m = prefix + m + suffix
-        dates.append(d)
+        m = os.path.join(src_folder, prefix + m + suffix)
+        dates.append(id)
         mp.append(m)
         if cams is not None:
             if c is None:
                 cams = None
             else:
-                cams.append(c)
+                cams.append(os.path.join(src_folder, c))
 
     return dates, mp, cams
 

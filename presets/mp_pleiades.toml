@@ -1,0 +1,25 @@
+# ASPEO PARAMETER FILE V0.0.1
+[aspeo]
+name = "Name"
+description = "Desc"
+output = "."
+dem = "dem"
+src_folder = "source"
+src_prefix = "IMG"
+src_suffix = "-1.tif"
+
+[[source]]
+id = "date1"
+cam = "cam1.xml"
+
+[[source]]
+id = "date2"
+cam = "cam2.xml"
+
+[bundle-adjust.cmd]
+d = true
+dummy = "yummy"
+
+[map-project.cmd]
+d = true
+dummy = "yummy"

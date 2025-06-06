@@ -70,7 +70,9 @@ def format_dict(dic: dict) -> str:
     return params
 
 
-def stereo(images: list, cameras: list, output: str, parameters: dict, debug=False):
+def stereo(
+    images: list[str], cameras: list[str], output: str, parameters: dict, debug=False
+):
     """Launch a parallel_stereo (ASP) based on a parameter dict
 
     If debug is used, print the command without launching it. Useful to show the command
@@ -79,7 +81,7 @@ def stereo(images: list, cameras: list, output: str, parameters: dict, debug=Fal
     params = format_dict(parameters["stereo"]["cmd"])
 
     cmd = "parallel_stereo {} {} {} {}".format(
-        arg_to_str(images), arg_to_str(cameras), arg_to_str(output), params
+        arg_to_str(images), arg_to_str(cameras), output, params
     )
 
     if debug:
@@ -88,11 +90,52 @@ def stereo(images: list, cameras: list, output: str, parameters: dict, debug=Fal
         sh(cmd)
 
 
-def corr_eval(left, right, disp, output, parameters: dict, debug=False):
+def corr_eval(
+    left: str, right: str, disp: str, output: str, parameters: dict, debug=False
+):
     """Launch a corr_eval (ASP) to evaluate the ncc of a stereo result"""
     params = format_dict(parameters.get("corr-eval", {}).get("cmd", {}))
 
     cmd = "corr_eval {} {} {} {} {}".format(params, left, right, disp, output)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def map_project(
+    dem: str, image: str, camera: str, output: str, parameters: dict, debug=False
+):
+    """Launch mapproject (ASP) to create an orthorectified image"""
+    params = format_dict(parameters.get("map-project", {}).get("cmd", {}))
+
+    cmd = "mapproject {} {} {} {} {}".format(params, dem, image, camera, output)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def bundle_adjust(
+    images: list[str],
+    cameras: list[str],
+    output: str,
+    parameters: dict,
+    ground_control_points: list[str] | None = None,
+    debug=False,
+):
+    """Launch bundle_adjust to reduce errors between cameras based on their given images"""
+    params = format_dict(parameters.get("bundle-adjust", {}).get("cmd", {}))
+
+    gcp = ""
+    if ground_control_points is not None:
+        gcp += " " + arg_to_str(ground_control_points)
+
+    cmd = "bundle_adjust {} {}{} -o {} {}".format(
+        arg_to_str(images), arg_to_str(cameras), gcp, output, params
+    )
 
     if debug:
         print(cmd)

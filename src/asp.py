@@ -3,8 +3,8 @@ import os
 import sys
 import subprocess
 
-BLACK_LEFT = os.path.join(os.path.dirname(__file__), "assets", "black_left.tsai")
-BLACK_RIGHT = os.path.join(os.path.dirname(__file__), "assets", "black_right.tsai")
+BLACK_LEFT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "black_left.tsai")
+BLACK_RIGHT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "black_right.tsai")
 
 
 def parse_toml(file: str) -> dict:

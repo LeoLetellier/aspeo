@@ -23,6 +23,22 @@ import os
 import docopt
 
 
+def resolve_pairs(file: str, param: dict):
+    """Fetch ids from file"""
+    with open(file, 'r') as infile:
+        content = infile.read().split('\n')
+    content = [c.split(" ") for c in list(filter(None, content))]
+    ids = [c[0] for c in content]
+    if len(content[0][0]) == len(content[0][1]):
+        ids += [c[1] for c in content]
+    ids = list(set(ids))
+
+    param["source"] = []
+    for id in ids:
+        dic = { "id": id }
+        param["source"].append(dic)
+
+
 def make_pairs(pairs_file: str, dates: list, mp: list, cams: list | None):
     """Derive pairing between images and dates based on a pair file"""
     assos_mp = dict(zip(dates, mp))
@@ -78,6 +94,8 @@ def pixel_tracking(params: dict, debug=False):
     pairs_file = params["stereo"]["pairs"]
     output_dir = params["aspeo"].get("output", ".")
 
+    if params.get("source", None) is None:
+       resolve_pairs(params["aspeo"]["source"], params)
     dates, mp, cams = fetch_sources(params)
     img_pairs, date_pairs, cam_pairs = make_pairs(pairs_file, dates, mp, cams)
 

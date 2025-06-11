@@ -3,16 +3,18 @@
 name = "Name"
 description = "Desc"
 output = "."
-# src_prefix =
-# src_suffix =
+source = "example/pairs.txt"
+src_folder = "raw_folder/"
+src_prefix = "pref_"
+src_suffix = "_suff.file"
 
-[[source]]
-id = "date"
-mp = "mp.tif"
-# camera =
+# [[source]]
+# id = "date"
+# mp = "mp.tif"
+# # camera =
 
 [stereo]
-pairs = "pairs.txt"
+pairs = "example/pairs.txt"
 
 [stereo.cmd]
 t = "nadirpinhole"

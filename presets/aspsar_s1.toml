@@ -7,6 +7,8 @@ src_folder = "./GEOTIFF/"
 # src_prefix = ""
 src_suffix = ".VV.mod_log.tif"
 
+# allow source to be a file path
+# allow source to be extracted from pair file -> retrieve the unique ids
 [[source]]
 id = "20210526"
 
@@ -23,7 +25,7 @@ threads-multiprocess = 5
 process = 5
 corr-kernel = [9, 9]
 cost-mode = 4
-stereo-algorithm = "asp_mgm_final"
+stereo-algorithm = "asp_final_mgm"
 subpixel-mode = 4
 subpixel-kernel = [75, 75]
 sgm-collar-size = 512

@@ -27,6 +27,8 @@ def resolve_pairs(file: str, param: dict):
     """Fetch ids from file"""
     with open(file, 'r') as infile:
         content = infile.read().split('\n')
+    if param.get("stereo", {}).get("pairs-header", False):
+        content = content[1:]
     content = [c.split(" ") for c in list(filter(None, content))]
     ids = [c[0] for c in content]
     if len(content[0][0]) == len(content[0][1]):
@@ -39,11 +41,13 @@ def resolve_pairs(file: str, param: dict):
         param["source"].append(dic)
 
 
-def make_pairs(pairs_file: str, dates: list, mp: list, cams: list | None):
+def make_pairs(pairs_file: str, dates: list, mp: list, cams: list | None, header: bool):
     """Derive pairing between images and dates based on a pair file"""
     assos_mp = dict(zip(dates, mp))
     with open(pairs_file, "r") as infile:
         line = infile.read().split("\n")
+        if header:
+            line = line[1:]
         date_pairs = [p.split(" ") for p in list(filter(None, line))]
     img_pairs = [[assos_mp[p[0]], assos_mp[p[1]]] for p in date_pairs]
     if cams is None:
@@ -97,7 +101,8 @@ def pixel_tracking(params: dict, debug=False):
     if params.get("source", None) is None:
        resolve_pairs(params["aspeo"]["source"], params)
     dates, mp, cams = fetch_sources(params)
-    img_pairs, date_pairs, cam_pairs = make_pairs(pairs_file, dates, mp, cams)
+    header = params.get("stereo", {}).get("pairs-header", False)
+    img_pairs, date_pairs, cam_pairs = make_pairs(pairs_file, dates, mp, cams, header)
 
     for p, d, c in zip(img_pairs, date_pairs, cam_pairs):
         output = os.path.join(output_dir, d[0] + "_" + d[1] + "/pt")

@@ -15,6 +15,7 @@ src_suffix = "_suff.file"
 
 [stereo]
 pairs = "example/pairs.txt"
+pairs-header = true
 
 [stereo.cmd]
 t = "nadirpinhole"

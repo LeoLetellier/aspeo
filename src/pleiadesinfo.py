@@ -124,10 +124,10 @@ class PleiadesDisplay:
 
     def display(self):
         message = "Pleiadesinfo: {}\n\n".format(self.dataset_name)
-        "date: {} {}\n".format(self.imaging_date, self.imaging_time)
-        "DIM (v{}) path: {}\n".format(self.dim_version, self.dim_path)
-        "nrow, ncol: {}, {}\n".format(self.nrow, self.ncol)
-        "datatype: {} {} {}\n".format(self.data_type, self.nbits, self.sign)
+        message += "date: {} {}\n".format(self.imaging_date, self.imaging_time)
+        message += "DIM (v{}) path: {}\n".format(self.dim_version, self.dim_path)
+        message += "nrow, ncol: {}, {}\n".format(self.nrow, self.ncol)
+        message += "datatype: {} {} {}\n".format(self.data_type, self.nbits, self.sign)
 
         print(message)
 

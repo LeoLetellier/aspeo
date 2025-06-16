@@ -15,6 +15,11 @@ mp_suffix = ""
 # source-header = true
 pairs = "pairs.txt"
 pairs-header = true
+derive-pan = false
+force = true        # relaunch all
+mp-pan = false
+mp-ms = false
+pansharp = false
 
 [[source]]
 id = "id src"  # ["id1", "id2"]
@@ -23,20 +28,28 @@ ms = ""
 cam = ""
 mp = "path mp"
 
+# bundle_adjust
 [bundle-adjust] # BA
 
+# gdal_translate
 [crop] # CROP
 
+# mapproject
 [map-project-pan] # MP_PAN
 
+# mapproject
 [map-project-ms] # MP_MS
 
+# gdal_pansharpening.py
 [pansharpening] # PANSHARP
 
+# orbitviz
 [orbitviz] # ORB
 
+# image_align
 [image-align] # ALIGNED
 
+# parallel_stereo
 [stereo] # STEREO > PAIR
 t = "pinhole"
 individually-normalize = true
@@ -52,10 +65,14 @@ subpixel-mode = 2
 subpixel-kernel = [35, 35]
 stop-point = 5
 
+# corr_eval
 [corr-eval] # in STEREO ncc
 
+# pc_align
 [pc-align] # in STEREO dem-aligned
 
+# point2dem
 [point2dem] # in STEREO dem.tif
 
+# dem_mosaic
 [dem-mosaic] # in output dir

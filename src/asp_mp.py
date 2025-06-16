@@ -17,37 +17,36 @@ Options:
 """
 
 from asp import map_project, bundle_adjust, parse_toml
+from params import get_sources
+from params import DIR_BA, DIR_MP_PAN, DIR_MP_MS, DIR_PANSHARP
 import os
 import docopt
 
 
-def fetch_sources(params: dict):
-    dem = params["dem"]
-    sources = params["source"]
-    imgs = []
-    cams = []
-    prefix = params.get("src_prefix", "")
-    suffix = params.get("src_suffix", "")
-    src_folder = params.get("src_folder", "")
-    for s in sources:
-        id = s["id"]
-        img = s.get("raw", id)
-        img = os.path.join(src_folder, prefix + img + suffix)
-        imgs.append(img)
-        cams.append(s["cam"])
-    return dem, imgs, cams
-
-
 def map_projection(params: dict, debug=False):
-    dem, imgs, cams = fetch_sources(params)
     output_dir = params.get("output", ".")
-    output_ba = os.path.join(output_dir, "BA/ba-")
-    output_mp = os.path.join(output_dir, "MP/mp-")
+    sources = get_sources(params)
+    output_ba = os.path.join(output_dir, DIR_BA)
+    output_mp_pan = os.path.join(output_dir, DIR_MP_PAN)
+    output_mp_ms = os.path.join(output_dir, DIR_MP_MS)
+    output_pansharp = os.path.join(output_dir, DIR_PANSHARP)
+
+    dem = params["dem"]
+    got_ms = all([s.get("ms", None) is not None for s in sources])
+
     if "bundle-adjust" in params.keys():
+        imgs = [s["pan"] for s in sources]
+        cams = [s["cam"] for s in sources]
         bundle_adjust(imgs, cams, output_ba, params, debug=debug)
-        params["map-project"]["cmd"]["bundle-adjust-prefix"] = output_ba
-    for mp in range(len(imgs)):
-        map_project(dem, imgs[mp], cams[mp], output_mp, params, debug=debug)
+        params["map-project"]["bundle-adjust-prefix"] = output_ba
+
+    if params.get("mp-pan", True):
+        for s in sources:
+            map_project(dem, s["pan"], s["cam"], output_mp_pan, params, debug=debug)
+
+    if params.get("mp-ms", True) and got_ms:
+        for s in sources:
+            map_project(dem, s["ms"], s["cam"], output_mp_ms, params, debug=debug)
 
 
 if __name__ == "__main__":

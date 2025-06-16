@@ -1,13 +1,7 @@
 [project]
 name = "aspeo"
 version = "0.2.0"
-description = "Python workflows calling Ames Stereo Pipeline (ASP) binaries for Earth Observation"
+description = "Ames Stereo Pipeline (ASP) Sequential Workflows for Earth Observation"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "docopt>=0.6.2",
-    "matplotlib>=3.10.3",
-    "numpy>=2.2.6",
-    "scipy>=1.15.3",
-    "tomli>=2.2.1",
-]
+dependencies = ["docopt>=0.6.2", "tomli>=2.2.1"]

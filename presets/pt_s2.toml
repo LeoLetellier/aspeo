@@ -4,8 +4,8 @@ output = "."
 pairs = "example/pairs.txt"
 pairs-header = true
 src_folder = "raw_folder/"
-pan_prefix = "pref_"
-pan_suffix = "_suff.file"
+mp_prefix = "pref_"
+mp_suffix = "_suff.file"
 
 # [[source]]
 
@@ -19,7 +19,7 @@ no-bigtiff = true
 tif-compress = "Deflate"
 corr-kernel = [9, 9]
 cost-mode = 3
-stereo-algorithm = "asp_mgm_final"
+stereo-algorithm = "asp_final_mgm"
 subpixel-mode = 11
 subpixel-kernel = [5, 5]
 stop-point = 5

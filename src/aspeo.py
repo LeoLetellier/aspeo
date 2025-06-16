@@ -36,7 +36,6 @@ import docopt
 
 
 def resolve_cli(arguments):
-    print(arguments)
     if arguments["new"]:
         preset = arguments["<preset>"]
         path = arguments["<path>"]
@@ -72,5 +71,6 @@ def version_message():
 
 if __name__ == "__main__":
     arguments = docopt.docopt(__doc__)
+    # print(arguments)
 
     resolve_cli(arguments)

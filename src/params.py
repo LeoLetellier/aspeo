@@ -2,11 +2,12 @@ import os
 
 KEYS = ["id", "pan", "ms", "cam", "mp"]
 
-BA_DIR = "BA/ba"
-MP_PAN_DIR = "MP/PAN/mp"
-MP_MS_DIR = "MP/MS/mp"
-MP_PANSHAP_DIR = "MP/PANSHARP/mp"
-STEREO_DIR = "STEREO/stereo"
+DIR_BA = "/BA/ba"
+DIR_MP_PAN = "/MP/PAN/mp-pan"
+DIR_MP_MS = "/MP/MS/mp-ms"
+DIR_PANSHARP = "/MP/PANSHARP/pansharp"
+DIR_STEREO = "/STEREO/"
+PREF_STEREO = "/stereo"
 
 
 def get_sources(params: dict) -> list[dict]:
@@ -63,11 +64,15 @@ def extend_paths(sources: list[dict], params: dict) -> list[dict]:
         pref = params.get(key + "_prefix", "")
         suff = params.get(key + "_suffix", "")
         if s.get(key, None) is not None:
-            s[key] = os.path.join(src_folder, pref, s[key], suff)
+            s[key] = os.path.join(src_folder, pref + s[key] + suff)
 
     for s in sources:
-        if s.get("pan", None) is None:
-            s["pan"] = s["id"]
+        if params.get("derive-pan", False):
+            if s.get("pan", None) is None:
+                s["pan"] = s["id"]
+        else:
+            if s.get("mp", None) is None:
+                s["mp"] = s["id"]
 
         for key in KEYS[1:]:
             extend(key)

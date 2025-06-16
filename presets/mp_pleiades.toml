@@ -3,21 +3,26 @@ description = "Desc"
 output = "."
 dem = "dem"
 src_folder = "source"
-src_prefix = "IMG"
-src_suffix = "-1.tif"
+pan_prefix = "IMG_"
+pan_suffix = "-1.tif"
+# pairs = "example/pairs.txt"
+# pairs-header = true
+derive-pan = true
 
 [[source]]
 id = "date1"
 cam = "cam1.xml"
+ms = "ms1"
 
 [[source]]
 id = "date2"
 cam = "cam2.xml"
+ms = "ms2"
 
-[bundle-adjust.cmd]
+[bundle-adjust]
 d = true
 dummy = "yummy"
 
-[map-project.cmd]
+[map-project]
 d = true
 dummy = "yummy"

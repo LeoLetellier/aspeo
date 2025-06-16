@@ -1,5 +1,3 @@
-# ASPeo PARAMETER FILE V0.0.1
-[aspeo]
 name = "Name"
 description = "Desc"
 output = "Out"

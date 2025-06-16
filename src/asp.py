@@ -3,8 +3,12 @@ import os
 import sys
 import subprocess
 
-BLACK_LEFT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "black_left.tsai")
-BLACK_RIGHT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "black_right.tsai")
+BLACK_LEFT = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "assets", "black_left.tsai"
+)
+BLACK_RIGHT = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "assets", "black_right.tsai"
+)
 
 
 def parse_toml(file: str) -> dict:
@@ -78,7 +82,7 @@ def stereo(
     If debug is used, print the command without launching it. Useful to show the command
     even without the ASP binaries available
     """
-    params = format_dict(parameters["stereo"]["cmd"])
+    params = format_dict(parameters["stereo"])
 
     cmd = "parallel_stereo {} {} {} {}".format(
         arg_to_str(images), arg_to_str(cameras), output, params
@@ -94,7 +98,7 @@ def corr_eval(
     left: str, right: str, disp: str, output: str, parameters: dict, debug=False
 ):
     """Launch a corr_eval (ASP) to evaluate the ncc of a stereo result"""
-    params = format_dict(parameters.get("corr-eval", {}).get("cmd", {}))
+    params = format_dict(parameters["corr-eval"])
 
     cmd = "corr_eval {} {} {} {} {}".format(params, left, right, disp, output)
 
@@ -108,7 +112,7 @@ def map_project(
     dem: str, image: str, camera: str, output: str, parameters: dict, debug=False
 ):
     """Launch mapproject (ASP) to create an orthorectified image"""
-    params = format_dict(parameters.get("map-project", {}).get("cmd", {}))
+    params = format_dict(parameters["map-project"])
 
     cmd = "mapproject {} {} {} {} {}".format(params, dem, image, camera, output)
 
@@ -124,10 +128,11 @@ def bundle_adjust(
     output: str,
     parameters: dict,
     ground_control_points: list[str] | None = None,
+    parallel=False,
     debug=False,
 ):
     """Launch bundle_adjust to reduce errors between cameras based on their given images"""
-    params = format_dict(parameters.get("bundle-adjust", {}).get("cmd", {}))
+    params = format_dict(parameters["bundle-adjust"])
 
     gcp = ""
     if ground_control_points is not None:
@@ -136,6 +141,60 @@ def bundle_adjust(
     cmd = "bundle_adjust {} {}{} -o {} {}".format(
         arg_to_str(images), arg_to_str(cameras), gcp, output, params
     )
+
+    if parallel:
+        cmd = "parallel_" + cmd
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def pc_align(
+    reference: str,
+    source: str,
+    output: str,
+    parameters: dict,
+    debug=False,
+):
+    """Launch pc_align to align a source point cloud to another reference (or DEM)"""
+    params = format_dict(parameters["pc-align"])
+
+    cmd = "pc_align {} {} {} -o {}".format(params, reference, source, output)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def point2dem(
+    point_cloud: str,
+    output: str,
+    parameters: dict,
+    debug=False,
+):
+    """Launch point2dem to convert a point cloud into a DEM"""
+    params = format_dict(parameters["point2dem"])
+
+    cmd = "point2dem {} {} -o {}".format(params, point_cloud, output)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def dem_mosaic(
+    dems: list[str],
+    output: str,
+    parameters: dict,
+    debug=False,
+):
+    """Launch dem_mosaic to merge rasters with overlap blending"""
+    params = format_dict(parameters["dem-mosaic"])
+
+    cmd = "dem_mosaic {} {} -o {}".format(params, arg_to_str(dems), output)
 
     if debug:
         print(cmd)

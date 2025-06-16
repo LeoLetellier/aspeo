@@ -13,4 +13,4 @@ fi
 FOLDER="$(dirname "$0")"
 PARENT="$(dirname "$FOLDER")"
 
-$PYTHON_EXEC "$PARENT"/src/pleiadesinfo.py "$@"
+$PYTHON_EXEC "$PARENT"/sats/pleiadesinfo.py "$@"

@@ -10,7 +10,7 @@ Need from the parameter file:
 * corr-eval: add to compute the normalized cross-correlation (ncc metric)
 
 Usage:
-    asp_pt.py <toml> [--debug]
+    asp_pt.py <toml> [--debug | -d]
     asp_pt.py -h | --help
 
 Options:
@@ -19,14 +19,15 @@ Options:
 """
 
 from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT
+from params import get_sources, get_pairs, source_from_id, ids_from_source
 import os
 import docopt
 
 
 def resolve_pairs(file: str, param: dict):
     """Fetch ids from file"""
-    with open(file, 'r') as infile:
-        content = infile.read().split('\n')
+    with open(file, "r") as infile:
+        content = infile.read().split("\n")
     if param.get("stereo", {}).get("pairs-header", False):
         content = content[1:]
     content = [c.split(" ") for c in list(filter(None, content))]
@@ -37,7 +38,7 @@ def resolve_pairs(file: str, param: dict):
 
     param["source"] = []
     for id in ids:
-        dic = { "id": id }
+        dic = {"id": id}
         param["source"].append(dic)
 
 
@@ -66,9 +67,9 @@ def fetch_sources(params: dict):
     dates = []
     mp = []
     cams = []
-    prefix = params["aspeo"].get("src_prefix", "")
-    suffix = params["aspeo"].get("src_suffix", "")
-    src_folder = params["aspeo"].get("src_folder", "")
+    prefix = params.get("src_prefix", "")
+    suffix = params.get("src_suffix", "")
+    src_folder = params.get("src_folder", "")
     for s in sources:
         id = s["id"]
         m = s.get("mp", id)
@@ -95,19 +96,30 @@ def corr_eval_ncc(stereo_output: str, params: dict, debug=False):
 
 def pixel_tracking(params: dict, debug=False):
     """Pixel tracking sequence using stereo"""
-    pairs_file = params["stereo"]["pairs"]
-    output_dir = params["aspeo"].get("output", ".")
+    output_dir = params.get("output", ".")
+    sources = get_sources(params)
+    pairs = get_pairs(params, ids_from_source(sources))
+    # dates, mp, cams = fetch_sources(params)
+    # header = params.get("stereo", {}).get("pairs-header", False)
+    # img_pairs, date_pairs, cam_pairs = make_pairs(pairs_file, dates, mp, cams, header)
 
-    if params.get("source", None) is None:
-       resolve_pairs(params["aspeo"]["source"], params)
-    dates, mp, cams = fetch_sources(params)
-    header = params.get("stereo", {}).get("pairs-header", False)
-    img_pairs, date_pairs, cam_pairs = make_pairs(pairs_file, dates, mp, cams, header)
+    # for p, d, c in zip(img_pairs, date_pairs, cam_pairs):
+    #     output = os.path.join(output_dir, d[0] + "_" + d[1] + "/pt")
+    #     stereo(p, c, output, params, debug=debug)
+    #     if params.get("corr-eval", None) is not None:
+    #         corr_eval_ncc(output, params, debug=debug)
+    for p in pairs:
+        id1, id2 = p[0], p[1]
+        src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
+        pans = [src1["pan"], src2["pan"]]
+        cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
+        output = os.path.join(output_dir, "STEREO", id1 + "_" + id2 + "/stereo")
+        stereo(pans, cams, output, params, debug=debug)
 
-    for p, d, c in zip(img_pairs, date_pairs, cam_pairs):
-        output = os.path.join(output_dir, d[0] + "_" + d[1] + "/pt")
-        stereo(p, c, output, params, debug=debug)
-        if params.get("corr-eval", None) is not None:
+    if params.get("corr-eval", None) is not None:
+        for p in pairs:
+            id1, id2 = p[0], p[1]
+            output = os.path.join(output_dir, "STEREO", id1 + "_" + id2 + "/stereo")
             corr_eval_ncc(output, params, debug=debug)
 
 

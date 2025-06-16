@@ -1,23 +1,43 @@
-# ASPEO PARAMETER FILE V0.0.1
-[aspeo]
 name = "Name"
 description = "Desc"
 output = "."
-src = "pleiades"
+dem = ""
+src_folder = ""
+pan_prefix = ""
+pan_suffix = ""
+ms_prefix = ""
+ms_suffix = ""
+cam_prefix = ""
+cam_suffix = ""
+mp_prefix = ""
+mp_suffix = ""
+# source = "smthg"
+# source-header = true
+pairs = "pairs.txt"
+pairs-header = true
 
 [[source]]
-id = "id src"
+id = "id src"  # ["id1", "id2"]
+pan = ""
+ms = ""
+cam = ""
 mp = "path mp"
-#prefix
-#suffix
-#camera
-#raw
 
-[stereo]
-pairs = "pairs.txt"
+[bundle-adjust] # BA
 
-[stereo.asp]
-[stereo.cmd]
+[crop] # CROP
+
+[map-project-pan] # MP_PAN
+
+[map-project-ms] # MP_MS
+
+[pansharpening] # PANSHARP
+
+[orbitviz] # ORB
+
+[image-align] # ALIGNED
+
+[stereo] # STEREO > PAIR
 t = "pinhole"
 individually-normalize = true
 alignment-method = "none"
@@ -31,3 +51,11 @@ stereo-algorithm = "asp_bm"
 subpixel-mode = 2
 subpixel-kernel = [35, 35]
 stop-point = 5
+
+[corr-eval] # in STEREO ncc
+
+[pc-align] # in STEREO dem-aligned
+
+[point2dem] # in STEREO dem.tif
+
+[dem-mosaic] # in output dir

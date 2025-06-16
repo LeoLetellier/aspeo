@@ -22,13 +22,13 @@ import docopt
 
 
 def fetch_sources(params: dict):
-    dem = params["aspeo"]["dem"]
+    dem = params["dem"]
     sources = params["source"]
     imgs = []
     cams = []
-    prefix = params["aspeo"].get("src_prefix", "")
-    suffix = params["aspeo"].get("src_suffix", "")
-    src_folder = params["aspeo"].get("src_folder", "")
+    prefix = params.get("src_prefix", "")
+    suffix = params.get("src_suffix", "")
+    src_folder = params.get("src_folder", "")
     for s in sources:
         id = s["id"]
         img = s.get("raw", id)
@@ -40,7 +40,7 @@ def fetch_sources(params: dict):
 
 def map_projection(params: dict, debug=False):
     dem, imgs, cams = fetch_sources(params)
-    output_dir = params["aspeo"].get("output", ".")
+    output_dir = params.get("output", ".")
     output_ba = os.path.join(output_dir, "BA/ba-")
     output_mp = os.path.join(output_dir, "MP/mp-")
     if "bundle-adjust" in params.keys():

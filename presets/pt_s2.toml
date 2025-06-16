@@ -1,23 +1,15 @@
-# ASPEO PARAMETER FILE V0.0.1
-[aspeo]
 name = "Name"
 description = "Desc"
 output = "."
-source = "example/pairs.txt"
-src_folder = "raw_folder/"
-src_prefix = "pref_"
-src_suffix = "_suff.file"
-
-# [[source]]
-# id = "date"
-# mp = "mp.tif"
-# # camera =
-
-[stereo]
 pairs = "example/pairs.txt"
 pairs-header = true
+src_folder = "raw_folder/"
+pan_prefix = "pref_"
+pan_suffix = "_suff.file"
 
-[stereo.cmd]
+# [[source]]
+
+[stereo]
 t = "nadirpinhole"
 individually-normalize = true
 alignment-method = "none"

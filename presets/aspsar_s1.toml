@@ -1,22 +1,12 @@
-# ASPEO PARAMETER FILE V0.0.1
-[aspeo]
 name = "Name"
 description = "Desc"
 output = "./CORREL/"
 src_folder = "./GEOTIFF/"
-# src_prefix = ""
 src_suffix = ".VV.mod_log.tif"
-
-# allow source to be a file path
-# allow source to be extracted from pair file -> retrieve the unique ids
-[[source]]
-id = "20210526"
-
-[[source]]
-id = "20250526"
 
 [stereo]
 pairs = "./example/pairs.txt"
+pairs-header = true
 
 [stereo.cmd]
 t = "pinhole"

@@ -28,13 +28,20 @@ For pair selection, indicate a file in the section `stereo` with the keyword `pa
 
 NCC metric can be generated at the end of the run by specifying `[corr-eval]` in the parameter file.
 
+``crop > mp-pan > iamge-align > stereo (stop point 5) > corr-eval``
+
+
 ## DSM generation
 
 WORK IN PROGRESS
 
+``ba > crop > mp-pan > stereo > pc-align > p2d > dmos``
+
 ## Map-projection
 
 WORK IN PROGRESS
+
+``ba > mp-pan > mp-ms > pansharp > orbitviz``
 
 ## Adding the scripts to path
 

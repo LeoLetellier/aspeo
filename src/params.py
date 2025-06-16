@@ -6,6 +6,7 @@ DIR_BA = "/BA/ba"
 DIR_MP_PAN = "/MP/PAN/mp-pan"
 DIR_MP_MS = "/MP/MS/mp-ms"
 DIR_PANSHARP = "/MP/PANSHARP/pansharp"
+DIR_ALIGNED = "/MP/ALIGNED/align-"
 DIR_STEREO = "/STEREO/"
 PREF_STEREO = "/stereo"
 

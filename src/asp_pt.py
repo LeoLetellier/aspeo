@@ -18,10 +18,11 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT
+from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT, image_align
 from params import get_sources, get_pairs, source_from_id, ids_from_source
-from params import DIR_STEREO, PREF_STEREO
+from params import DIR_STEREO, PREF_STEREO, DIR_ALIGNED
 import os
+from shutil import copyfile
 import docopt
 
 
@@ -38,13 +39,33 @@ def pixel_tracking(params: dict, debug=False):
     output_dir = params.get("output", ".")
     sources = get_sources(params)
     pairs = get_pairs(params, ids_from_source(sources))
+    aligned = None
+
+    if params.get("align", None) is not None:
+        aligned = {sources[0]["id"]: DIR_ALIGNED + os.path.basename(sources[0]["mp"])}
+        if not debug:
+            copyfile(sources[0]["mp"], DIR_ALIGNED + os.path.basename(sources[0]["mp"]))
+
+        for s in sources[1:]:
+            image_align(
+                sources[0]["mp"],
+                s["mp"],
+                DIR_ALIGNED + os.path.basename(s["mp"]),
+                params,
+                debug=debug,
+            )
+            aligned[s["id"]] = DIR_ALIGNED + os.path.basename(s["mp"])
 
     for p in pairs:
         id1, id2 = p[0], p[1]
         src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
-        pans = [src1["mp"], src2["mp"]]
+        if aligned is not None:
+            pans = [aligned[id1], aligned[id2]]
+        else:
+            pans = [src1["mp"], src2["mp"]]
         cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
         output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + PREF_STEREO)
+        params["stereo"]["stop-point"] = 5
         stereo(pans, cams, output, params, debug=debug)
 
     if params.get("corr-eval", None) is not None:

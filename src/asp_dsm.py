@@ -7,7 +7,7 @@ Need from the parameter file:
 * sources: raw images (non map-projected)
 
 Usage:
-    asp_dsm.py <toml> [--debug]
+    asp_dsm.py <toml> [--debug | -d]
     asp_dsm.py -h | --help
 
 Options:

@@ -19,7 +19,6 @@ derive-pan = false
 force = true        # relaunch all
 mp-pan = false
 mp-ms = false
-pansharp = false
 
 [[source]]
 id = "id src"  # ["id1", "id2"]

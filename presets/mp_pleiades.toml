@@ -26,3 +26,9 @@ dummy = "yummy"
 [map-project]
 d = true
 dummy = "yummy"
+
+[pansharpening]
+some-option = true
+
+[orbitviz]
+dummy = "display me"

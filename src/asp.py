@@ -200,3 +200,60 @@ def dem_mosaic(
         print(cmd)
     else:
         sh(cmd)
+
+
+def image_align(
+    reference: str, source: str, output: str, parameters: dict, debug=False
+):
+    """Launch image_align to align images feature based"""
+    params = format_dict(parameters["align"])
+
+    cmd = "image_align {} {} {} -o {}".format(params, reference, source, output)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def orbit_viz(
+    imgs: list[str], cams: list[str], output: str, parameters: dict, debug=False
+):
+    """Launch orbitviz to create a kml featuring the acquisition orbits"""
+    params = format_dict(parameters["orbitviz"])
+
+    cmd = "orbitviz {} {} {} -o {}".format(
+        params, arg_to_str(imgs), arg_to_str(cams), output
+    )
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def gdal_crop(input: str, output: str, parameters: dict, debug=False):
+    """Use gdal_translate with the crop parameters"""
+    params = format_dict(parameters["crop"])
+
+    cmd = "gdal_translate {} {} {}".format(params, input, output)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)
+
+
+def gdal_pansharp(
+    panchro: str, ms: list[str], output: str, parameters: dict, debug=False
+):
+    """Launch gdal pansharpen to create multispectral image with the resolution of a
+    panchromatic image"""
+    params = format_dict(parameters["pansharpening"])
+
+    cmd = "gdal_pansharpen {} {} {} {}".format(panchro, arg_to_str(ms), output, params)
+
+    if debug:
+        print(cmd)
+    else:
+        sh(cmd)

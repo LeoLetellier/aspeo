@@ -8,7 +8,7 @@ Need from the parameter file:
 * map-project > cmd: parameters needed by the stereo command
 
 Usage:
-    asp_mp.py <toml> [--debug]
+    asp_mp.py <toml> [--debug | -d]
     asp_mp.py -h | --help
 
 Options:
@@ -16,7 +16,7 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import map_project, bundle_adjust, parse_toml
+from asp import map_project, bundle_adjust, parse_toml, gdal_pansharp, orbit_viz
 from params import get_sources
 from params import DIR_BA, DIR_MP_PAN, DIR_MP_MS, DIR_PANSHARP
 import os
@@ -37,7 +37,8 @@ def map_projection(params: dict, debug=False):
     if "bundle-adjust" in params.keys():
         imgs = [s["pan"] for s in sources]
         cams = [s["cam"] for s in sources]
-        bundle_adjust(imgs, cams, output_ba, params, debug=debug)
+        parallel = len(imgs) > 3
+        bundle_adjust(imgs, cams, output_ba, params, parallel=parallel, debug=debug)
         params["map-project"]["bundle-adjust-prefix"] = output_ba
 
     if params.get("mp-pan", True):
@@ -47,6 +48,21 @@ def map_projection(params: dict, debug=False):
     if params.get("mp-ms", True) and got_ms:
         for s in sources:
             map_project(dem, s["ms"], s["cam"], output_mp_ms, params, debug=debug)
+
+    if params.get("pansharpening", None) is not None:
+        for s in sources:
+            gdal_pansharp(
+                s["pan"],
+                s["cam"],
+                output_pansharp + s["id"] + ".tif",
+                params,
+                debug=debug,
+            )
+
+    if params.get("orbitviz", None) is not None:
+        imgs = [s["pan"] for s in sources]
+        cams = [s["cam"] for s in sources]
+        orbit_viz(imgs, cams, output_dir + "/orbits.kml", params, debug=debug)
 
 
 if __name__ == "__main__":

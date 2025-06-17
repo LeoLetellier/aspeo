@@ -15,7 +15,7 @@ This workflow uses a toml file to launch ASP binaries. For the parts correspondi
 
 So you can add/modify/remove any asp specific parameter to modulate the run or use a new asp version.
 
-Other parameters are used to configure how the workflow behave.
+Global parameters are used to configure how the workflow behave.
 
 The parameter file can be generated using `asp_new`, which retrieve one of the presets available in `./presets/`.
 
@@ -29,13 +29,9 @@ For pair selection, indicate a file in the section `stereo` with the keyword `pa
 
 NCC metric can be generated at the end of the run by specifying `[corr-eval]` in the parameter file.
 
-target:
-
-``(crop > mp-pan >) iamge-align > stereo (stop point 5) > corr-eval``
-
 implemented:
 
-``align > stereo > corr_eval``
+``align > stereo (stop point 5) > corr_eval``
 
 not tested on asp/gdal command
 
@@ -43,13 +39,9 @@ not tested on asp/gdal command
 
 WORK IN PROGRESS
 
-target:
-
-``(ba > crop > mp-pan >) stereo > pc-align > p2d > dmos``
-
 implemented:
 
-``/``
+``stereo > pc-align > p2d > dmos``
 
 ## Map-projection
 
@@ -68,3 +60,11 @@ not tested on real asp/gdal cmd
 ## Adding the scripts to path
 
 To isolate the files form PATH, exports to bash files are available in the folder `./export/`. A custom `.venv` virtual environment can be created in the repo and will be used instead of `PATH` `python` if exists.
+
+
+## TODO
+
+- [ ] add verif to use already processed files
+- [ ] add logging console and file
+- [ ] write configs toml
+- [ ] test workflows on actual commands

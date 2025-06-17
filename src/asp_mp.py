@@ -41,6 +41,9 @@ def map_projection(params: dict, debug=False):
         bundle_adjust(imgs, cams, output_ba, params, parallel=parallel, debug=debug)
         params["map-project"]["bundle-adjust-prefix"] = output_ba
 
+    if "crop" in params.keys():
+        pass # todo
+
     if params.get("mp-pan", True):
         for s in sources:
             map_project(dem, s["pan"], s["cam"], output_mp_pan, params, debug=debug)
@@ -49,7 +52,7 @@ def map_projection(params: dict, debug=False):
         for s in sources:
             map_project(dem, s["ms"], s["cam"], output_mp_ms, params, debug=debug)
 
-    if params.get("pansharpening", None) is not None:
+    if "pansharpening" in params.keys():
         for s in sources:
             gdal_pansharp(
                 s["pan"],
@@ -59,7 +62,7 @@ def map_projection(params: dict, debug=False):
                 debug=debug,
             )
 
-    if params.get("orbitviz", None) is not None:
+    if "orbitviz" in params.keys():
         imgs = [s["pan"] for s in sources]
         cams = [s["cam"] for s in sources]
         orbit_viz(imgs, cams, output_dir + "/orbits.kml", params, debug=debug)

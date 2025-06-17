@@ -41,7 +41,7 @@ def pixel_tracking(params: dict, debug=False):
     pairs = get_pairs(params, ids_from_source(sources))
     aligned = None
 
-    if params.get("align", None) is not None:
+    if "align" in params.keys():
         aligned = {sources[0]["id"]: DIR_ALIGNED + os.path.basename(sources[0]["mp"])}
         if not debug:
             copyfile(sources[0]["mp"], DIR_ALIGNED + os.path.basename(sources[0]["mp"]))
@@ -56,19 +56,20 @@ def pixel_tracking(params: dict, debug=False):
             )
             aligned[s["id"]] = DIR_ALIGNED + os.path.basename(s["mp"])
 
-    for p in pairs:
-        id1, id2 = p[0], p[1]
-        src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
-        if aligned is not None:
-            pans = [aligned[id1], aligned[id2]]
-        else:
-            pans = [src1["mp"], src2["mp"]]
-        cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
-        output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + PREF_STEREO)
-        params["stereo"]["stop-point"] = 5
-        stereo(pans, cams, output, params, debug=debug)
+    if "stereo" in params.keys():
+        for p in pairs:
+            id1, id2 = p[0], p[1]
+            src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
+            if aligned is not None:
+                pans = [aligned[id1], aligned[id2]]
+            else:
+                pans = [src1["mp"], src2["mp"]]
+            cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
+            output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + PREF_STEREO)
+            params["stereo"]["stop-point"] = 5
+            stereo(pans, cams, output, params, debug=debug)
 
-    if params.get("corr-eval", None) is not None:
+    if "corr-eval" in params.keys():
         for p in pairs:
             id1, id2 = p[0], p[1]
             output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + PREF_STEREO)

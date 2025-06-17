@@ -1,0 +1,48 @@
+name = "Name"
+description = "Desc"
+output = "."
+dem = "dem"
+src_folder = "source"
+pan_prefix = "IMG_"
+pan_suffix = "-1.tif"
+cam_suffix = ".XML"
+pairs = "example/pairs_dsm.txt"
+pairs-header = true
+derive-pan = true
+
+[[source]]
+id = "20210526"
+cam = "20210526"
+mp = "20210526"
+
+[[source]]
+id = "20210527"
+cam = "20210527"
+mp = "20210527"
+
+[[source]]
+id = "20210528"
+cam = "20210528"
+mp = "20210528"
+
+[[source]]
+id = "20230526"
+cam = "20230526"
+mp = "20230526"
+
+[[source]]
+id = "20250526"
+cam = "20250526"
+mp = "20250526"
+
+[stereo]
+yummy = true
+
+[pc-align]
+dummy = true
+
+[point2dem]
+somy = true
+
+[dem-mosaic]
+cookie = true

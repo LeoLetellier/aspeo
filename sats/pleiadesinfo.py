@@ -91,6 +91,7 @@ class PleiadesDisplay:
         self.acqu_angles = None
         self.solar_inc = None
         self.gsd = None
+        self.bound_geom, self.bound_coord = self.get_geom()
 
     def get(self, value: str, attrib: None | str = None):
         fetch = self.dim.find(value)
@@ -102,12 +103,22 @@ class PleiadesDisplay:
         else:
             return fetch.attrib[attrib]
 
+    def get_geom(self):
+        vertex = self.dim.findall("./Dataset_Content/Dataset_Extent/Vertex")
+        if vertex is None:
+            return None, None
+        latlon = [[v.find(".LAT").text, v.find(".LON").text] for v in vertex]
+        coordxy = [[v.find(".COL").text, v.find(".ROW").text] for v in vertex]
+        return latlon, coordxy
+
     def display(self):
         message = "Pleiadesinfo: {}\n\n".format(self.dataset_name)
         message += "date: {} {}\n".format(self.imaging_date, self.imaging_time)
         message += "DIM (v{}): {}\n".format(self.dim_version, self.dim_path)
         message += "nrow, ncol: {}, {}\n".format(self.nrow, self.ncol)
         message += "datatype: {} {} {}\n".format(self.data_type, self.nbits, self.sign)
+        message += "Bounding polygon: {}".format(self.bound_geom)
+        message += "                  {}".format(self.bound_coord)
 
         print(message)
 

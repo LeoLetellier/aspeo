@@ -86,7 +86,7 @@ def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = No
     file = params["pairs"]
     with open(file, "r") as infile:
         content = infile.read().split("\n")
-    content = [c.split(" ") for c in list(filter(None, content))]
+    content = [c.replace('\t', ' ').split(" ") for c in list(filter(None, content))]
 
     if params.get("pairs-header", False):
         content = content[1:]

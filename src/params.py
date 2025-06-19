@@ -81,7 +81,7 @@ def extend_paths(sources: list[dict], params: dict) -> list[dict]:
     return sources
 
 
-def get_pairs(params: dict, ids: list[str] | None = None) -> list[list[str]]:
+def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = None) -> list[list[str]]:
     """Fetch ids from file"""
     file = params["pairs"]
     with open(file, "r") as infile:
@@ -91,8 +91,11 @@ def get_pairs(params: dict, ids: list[str] | None = None) -> list[list[str]]:
     if params.get("pairs-header", False):
         content = content[1:]
 
-    if not all([len(c) == 2 or len(c) == 3 for c in content]):
+    if first is None and not all([len(c) == 2 or len(c) == 3 for c in content]):
         raise ValueError("Pairs file is invalid, pairs should involve 2 or 3 ids.")
+
+    if first is not None:
+        content = [c[:first] for c in content]
 
     if ids is not None:
         for c in content:

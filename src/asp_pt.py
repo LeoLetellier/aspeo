@@ -38,7 +38,7 @@ def pixel_tracking(params: dict, debug=False):
     """Pixel tracking sequence using stereo"""
     output_dir = params.get("output", ".")
     sources = get_sources(params)
-    pairs = get_pairs(params, ids_from_source(sources))
+    pairs = get_pairs(params, ids_from_source(sources), first=2)
     aligned = None
 
     if "align" in params.keys():

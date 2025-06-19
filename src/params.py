@@ -11,11 +11,11 @@ DIR_STEREO = "/STEREO/"
 PREF_STEREO = "/stereo"
 
 
-def get_sources(params: dict) -> list[dict]:
+def get_sources(params: dict, first=None) -> list[dict]:
     """Create the source dict from a file or raw definition"""
     source = params.get("source", None)
     if source is None:
-        pairs = get_pairs(params)
+        pairs = get_pairs(params, first=first)
         ids = ids_from_pairs(pairs)
         source = [{"id": i} for i in ids]
         return extend_paths(source, params)

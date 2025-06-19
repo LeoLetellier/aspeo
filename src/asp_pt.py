@@ -65,7 +65,10 @@ def pixel_tracking(params: dict, debug=False):
             else:
                 pans = [src1["mp"], src2["mp"]]
             cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
+            output = os.path.join(output_dir, DIR_STEREO)
+            print(output)
             output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + PREF_STEREO)
+            print(output_dir, output)
             params["stereo"]["stop-point"] = 5
             stereo(pans, cams, output, params, debug=debug)
 

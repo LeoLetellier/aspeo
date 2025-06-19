@@ -2,13 +2,13 @@ import os
 
 KEYS = ["id", "pan", "ms", "cam", "mp"]
 
-DIR_BA = "/BA/ba"
-DIR_MP_PAN = "/MP/PAN/mp-pan"
-DIR_MP_MS = "/MP/MS/mp-ms"
-DIR_PANSHARP = "/MP/PANSHARP/pansharp"
-DIR_ALIGNED = "/MP/ALIGNED/align-"
-DIR_STEREO = "/STEREO/"
-PREF_STEREO = "/stereo"
+DIR_BA = "BA/ba"
+DIR_MP_PAN = "MP/PAN/mp-pan"
+DIR_MP_MS = "MP/MS/mp-ms"
+DIR_PANSHARP = "MP/PANSHARP/pansharp"
+DIR_ALIGNED = "MP/ALIGNED/align-"
+DIR_STEREO = "STEREO/"
+PREF_STEREO = "stereo"
 
 
 def get_sources(params: dict, first=None) -> list[dict]:
@@ -90,6 +90,7 @@ def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = No
 
     content = list(filter(None, content))
     content = [list(filter(None, c.replace('\t', ' ').strip().split())) for c in content]
+    content = list(filter(None, content))
 
     if params.get("pairs-header", False):
         content = content[1:]

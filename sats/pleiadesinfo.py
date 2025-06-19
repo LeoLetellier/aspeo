@@ -117,10 +117,17 @@ class PleiadesDisplay:
         message += "DIM (v{}): {}\n".format(self.dim_version, self.dim_path)
         message += "nrow, ncol: {}, {}\n".format(self.nrow, self.ncol)
         message += "datatype: {} {} {}\n".format(self.data_type, self.nbits, self.sign)
-        message += "Bounding polygon: {}".format(self.bound_geom)
-        message += "                  {}".format(self.bound_coord)
+        message += "Bounding polygon: {}".format(display_geom(self.bound_geom))
+        message += "                  {}".format(display_geom(self.bound_coord))
 
         print(message)
+
+
+def display_geom(geom):
+    disp = ""
+    for g in geom:
+        disp += g[1] + "," + g[0] + " "
+    return disp
 
     def export_kml(self, path):
         pass

@@ -84,9 +84,12 @@ def extend_paths(sources: list[dict], params: dict) -> list[dict]:
 def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = None) -> list[list[str]]:
     """Fetch ids from file"""
     file = params["pairs"]
+
     with open(file, "r") as infile:
         content = infile.read().split("\n")
-    content = [c.replace('\t', ' ').split(" ") for c in list(filter(None, content))]
+
+    content = list(filter(None, content))
+    content = [list(filter(None, c.replace('\t', ' ').strip().split())) for c in content]
 
     if params.get("pairs-header", False):
         content = content[1:]

@@ -2,13 +2,11 @@ name = "Name"
 description = "Desc"
 output = "./CORREL/"
 src_folder = "./GEOTIFF/"
-src_suffix = ".VV.mod_log.tif"
-
-[stereo]
-pairs = "./example/pairs.txt"
+mp_suffix = ".VV.mod_log.tif"
+pairs = "./example/amster_pairs.txt"
 pairs-header = true
 
-[stereo.cmd]
+[stereo]
 t = "pinhole"
 alignment-method = "none"
 threads-multiprocess = 5

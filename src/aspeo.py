@@ -16,15 +16,15 @@ Usage:
     aspeo.py
     aspeo.py -h | --help
     aspeo.py new [<preset>] [--path <path>]
-    aspeo.py pt <toml> [--debug | -d] [-v]
-    aspeo.py mp <toml> [--debug | -d] [-v]
-    aspeo.py dsm <toml> [--debug | -d] [-v]
+    aspeo.py pt <toml> [--debug | -d] [-v | --verbose]
+    aspeo.py mp <toml> [--debug | -d] [-v | --verbose]
+    aspeo.py dsm <toml> [--debug | -d] [-v | --verbose]
 
 Options:
     -h --help         Display command details
     <toml>              Path to the parameter file (toml)
     -d --debug        Display ASP commands instead of running them
-    -l
+    -v --verbose      Display logger messages to console
 
 """
 
@@ -35,6 +35,7 @@ from asp_new import generate_toml, VERSION
 from asp_dsm import dsm_generation
 import docopt
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -75,13 +76,14 @@ def version_message():
 if __name__ == "__main__":
     arguments = docopt.docopt(__doc__)
 
-    if arguments["-v"]:
+    if arguments["--verbose"]:
         if arguments["--debug"]:
-            logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(asctime)s | %(message)s")
+            logging.basicConfig(level=logging.DEBUG)
         else:
-            logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(asctime)s | %(message)s")
+            logging.basicConfig(level=logging.INFO)
     else:
-        logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(asctime)s | %(message)s")
+        logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(format="%(levelname)s: %(asctime)s | %(message)s")
     logger.debug("CLI arguments: {}".format(arguments))
 
     resolve_cli(arguments)

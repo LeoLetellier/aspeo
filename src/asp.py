@@ -3,6 +3,7 @@ import os
 import sys
 import subprocess
 import logging
+
 logger = logging.getLogger(__name__)
 
 BLACK_LEFT = os.path.join(
@@ -33,7 +34,7 @@ def sh(cmd: str, shell=True):
     ````
 
     """
-    logger.info('>> ' + cmd)
+    logger.info(">> " + cmd)
     subprocess.run(
         cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
     )
@@ -78,7 +79,12 @@ def format_dict(dic: dict) -> str:
 
 
 def stereo(
-    images: list[str], cameras: list[str], output: str, parameters: dict, debug=False
+    images: list[str],
+    cameras: list[str],
+    output: str,
+    parameters: dict,
+    dem: str | None = None,
+    debug=False,
 ):
     """Launch a parallel_stereo (ASP) based on a parameter dict
 
@@ -86,9 +92,10 @@ def stereo(
     even without the ASP binaries available
     """
     params = format_dict(parameters["stereo"])
+    dem = "" if dem is None else dem
 
-    cmd = "parallel_stereo {} {} {} {}".format(
-        arg_to_str(images), arg_to_str(cameras), output, params
+    cmd = "parallel_stereo {} {} {} {} {}".format(
+        params, arg_to_str(images), arg_to_str(cameras), output, dem
     )
 
     if debug:

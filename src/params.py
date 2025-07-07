@@ -1,5 +1,6 @@
 import os
 import logging
+
 logger = logging.getLogger(__name__)
 
 KEYS = ["id", "pan", "ms", "cam", "mp"]
@@ -89,7 +90,9 @@ def extend_paths(sources: list[dict], params: dict) -> list[dict]:
     return sources
 
 
-def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = None) -> list[list[str]]:
+def get_pairs(
+    params: dict, ids: list[str] | None = None, first: int | None = None
+) -> list[list[str]]:
     """Fetch ids from file"""
     file = params["pairs"]
 
@@ -97,7 +100,9 @@ def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = No
         content = infile.read().split("\n")
 
     content = list(filter(None, content))
-    content = [list(filter(None, c.replace('\t', ' ').strip().split())) for c in content]
+    content = [
+        list(filter(None, c.replace("\t", " ").strip().split())) for c in content
+    ]
     content = list(filter(None, content))
 
     if params.get("pairs-header", False):

@@ -19,12 +19,19 @@ Options:
 """
 
 from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT, image_align
-from params import get_sources, get_pairs, source_from_id, ids_from_source, make_full_pairs
+from params import (
+    get_sources,
+    get_pairs,
+    source_from_id,
+    ids_from_source,
+    make_full_pairs,
+)
 from params import DIR_STEREO, PREF_STEREO, DIR_ALIGNED
 import os
 from shutil import copyfile
 import docopt
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -75,7 +82,9 @@ def pixel_tracking(params: dict, debug=False):
             else:
                 pans = [src1["mp"], src2["mp"]]
             cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
-            output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO)
+            output = os.path.join(
+                output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO
+            )
             params["stereo"]["stop-point"] = 5
             stereo(pans, cams, output, params, debug=debug)
 
@@ -83,7 +92,9 @@ def pixel_tracking(params: dict, debug=False):
         logger.info("Launching correlation evaluation (ncc)")
         for p in pairs:
             id1, id2 = p[0], p[1]
-            output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO)
+            output = os.path.join(
+                output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO
+            )
             corr_eval_ncc(output, params, debug=debug)
 
 

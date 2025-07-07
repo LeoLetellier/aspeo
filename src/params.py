@@ -17,7 +17,7 @@ def get_sources(params: dict, first=None) -> list[dict]:
     if source is None:
         pairs = get_pairs(params, first=first)
         ids = ids_from_pairs(pairs)
-        source = [{"id": i} for i in ids]
+        source = [{"id": str(i)} for i in ids]
         return extend_paths(source, params)
     if type(source) is list:
         return extend_paths(source, params)
@@ -108,6 +108,14 @@ def get_pairs(params: dict, ids: list[str] | None = None, first: int | None = No
                     raise ValueError("Found unknown id in pairs file")
 
     return content
+
+
+def make_full_pairs(ids: list[str]) -> list[list[str]]:
+    pairs = []
+    for i in range(len(ids) - 1):
+        for j in range(i + 1, len(ids)):
+            pairs.append([ids[i], ids[j]])
+    return pairs
 
 
 def ids_from_pairs(pairs: list[list[str]]) -> list[str]:

@@ -32,7 +32,7 @@ class Preset:
         self.avail = self.get_avail()
 
         if self.preset not in self.avail:
-            raise ValueError("Invalid preset name")
+            raise ValueError("Invalid preset name. Presets are:", self.avail)
 
     def get_avail(self):
         """Check dynamically the available toml presets in repo"""

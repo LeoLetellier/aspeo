@@ -4,8 +4,8 @@ output = "Out"
 # Common folder for all source files
 src_folder = "source_folder"
 # Common prefix/suffix for all source images
-src_prefix = "pp_"
-src_suffix = "_ss.tif"
+mp_prefix = "pp_"
+mp_suffix = "_ss.tif"
 
 [[source]]
 id = "20250526"
@@ -19,9 +19,6 @@ id = "20210526"
 cam = "2.DIM"
 
 [stereo]
-pairs = "example/pairs.txt"
-
-[stereo.cmd]
 session-type = "pinhole"
 individually-normalize = true
 alignment-method = "none"

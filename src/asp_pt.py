@@ -19,7 +19,7 @@ Options:
 """
 
 from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT, image_align
-from params import get_sources, get_pairs, source_from_id, ids_from_source
+from params import get_sources, get_pairs, source_from_id, ids_from_source, make_full_pairs
 from params import DIR_STEREO, PREF_STEREO, DIR_ALIGNED
 import os
 from shutil import copyfile
@@ -38,7 +38,11 @@ def pixel_tracking(params: dict, debug=False):
     """Pixel tracking sequence using stereo"""
     output_dir = params.get("output", ".")
     sources = get_sources(params, first=2)
-    pairs = get_pairs(params, ids_from_source(sources), first=2)
+    ids = ids_from_source(sources)
+    if params.get("pairs", None) is not None:
+        pairs = get_pairs(params, ids, first=2)
+    else:
+        pairs = make_full_pairs(ids)
     aligned = None
 
     if "align" in params.keys():

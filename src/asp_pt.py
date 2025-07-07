@@ -24,6 +24,8 @@ from params import DIR_STEREO, PREF_STEREO, DIR_ALIGNED
 import os
 from shutil import copyfile
 import docopt
+import logging
+logger = logging.getLogger(__name__)
 
 
 def corr_eval_ncc(stereo_output: str, params: dict, debug=False):
@@ -36,6 +38,7 @@ def corr_eval_ncc(stereo_output: str, params: dict, debug=False):
 
 def pixel_tracking(params: dict, debug=False):
     """Pixel tracking sequence using stereo"""
+    logger.info("Initializing pixel tracking")
     output_dir = params.get("output", ".")
     sources = get_sources(params, first=2)
     ids = ids_from_source(sources)
@@ -46,6 +49,7 @@ def pixel_tracking(params: dict, debug=False):
     aligned = None
 
     if "align" in params.keys():
+        logger.info("Launching image alignment")
         aligned = {sources[0]["id"]: DIR_ALIGNED + os.path.basename(sources[0]["mp"])}
         if not debug:
             copyfile(sources[0]["mp"], DIR_ALIGNED + os.path.basename(sources[0]["mp"]))
@@ -61,8 +65,10 @@ def pixel_tracking(params: dict, debug=False):
             aligned[s["id"]] = DIR_ALIGNED + os.path.basename(s["mp"])
 
     if "stereo" in params.keys():
+        logger.info("Launching stereo")
         for p in pairs:
             id1, id2 = p[0], p[1]
+            logger.debug("Stereo pair: {} - {}".format(id1, id2))
             src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
             if aligned is not None:
                 pans = [aligned[id1], aligned[id2]]
@@ -74,6 +80,7 @@ def pixel_tracking(params: dict, debug=False):
             stereo(pans, cams, output, params, debug=debug)
 
     if "corr-eval" in params.keys():
+        logger.info("Launching correlation evaluation (ncc)")
         for p in pairs:
             id1, id2 = p[0], p[1]
             output = os.path.join(output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO)

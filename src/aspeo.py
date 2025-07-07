@@ -16,14 +16,15 @@ Usage:
     aspeo.py
     aspeo.py -h | --help
     aspeo.py new [<preset>] [--path <path>]
-    aspeo.py pt <toml> [--debug | -d]
-    aspeo.py mp <toml> [--debug | -d]
-    aspeo.py dsm <toml> [--debug | -d]
+    aspeo.py pt <toml> [--debug | -d] [-v]
+    aspeo.py mp <toml> [--debug | -d] [-v]
+    aspeo.py dsm <toml> [--debug | -d] [-v]
 
 Options:
     -h --help         Display command details
     <toml>              Path to the parameter file (toml)
     -d --debug        Display ASP commands instead of running them
+    -l
 
 """
 
@@ -33,6 +34,8 @@ from asp_mp import map_projection
 from asp_new import generate_toml, VERSION
 from asp_dsm import dsm_generation
 import docopt
+import logging
+logger = logging.getLogger(__name__)
 
 
 def resolve_cli(arguments):
@@ -71,6 +74,14 @@ def version_message():
 
 if __name__ == "__main__":
     arguments = docopt.docopt(__doc__)
-    # print(arguments)
+
+    if arguments["-v"]:
+        if arguments["--debug"]:
+            logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(asctime)s | %(message)s")
+        else:
+            logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(asctime)s | %(message)s")
+    else:
+        logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(asctime)s | %(message)s")
+    logger.debug("CLI arguments: {}".format(arguments))
 
     resolve_cli(arguments)

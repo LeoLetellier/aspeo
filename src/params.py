@@ -1,4 +1,6 @@
 import os
+import logging
+logger = logging.getLogger(__name__)
 
 KEYS = ["id", "pan", "ms", "cam", "mp"]
 
@@ -15,13 +17,16 @@ def get_sources(params: dict, first=None) -> list[dict]:
     """Create the source dict from a file or raw definition"""
     source = params.get("source", None)
     if source is None:
+        logger.info("Source is not explicitly described in toml, inferring from pairs")
         pairs = get_pairs(params, first=first)
         ids = ids_from_pairs(pairs)
         source = [{"id": str(i)} for i in ids]
         return extend_paths(source, params)
     if type(source) is list:
+        logger.info("Source is described directly in toml")
         return extend_paths(source, params)
 
+    logger.info("Reading source from file: {}".format(source))
     with open(source, "r") as infile:
         content = infile.read().split("\n")
     content = [c.split(" ") for c in list(filter(None, content))]
@@ -32,7 +37,8 @@ def get_sources(params: dict, first=None) -> list[dict]:
         raise ValueError("Source file is empty")
 
     key_index = {}
-    if params.get("stereo", {}).get("pairs-header", False):
+    if params.get("source-header", False):
+        logger.info("Read source keys")
         headers = content[0]
         content = content[1:]
         for k in KEYS:
@@ -43,11 +49,13 @@ def get_sources(params: dict, first=None) -> list[dict]:
             if key_index[KEYS[0]] is None:
                 raise ValueError("No id field provided in source file")
     else:
+        logger.info("Infer source keys from column nbs")
         for i, k in enumerate(KEYS):
             if len(content[0]) < i + 1:
                 key_index[k] = i
 
     source = []
+    logger.info("Dispatch content to source")
     for c in content:
         s = {}
         for k in KEYS:
@@ -115,6 +123,7 @@ def make_full_pairs(ids: list[str]) -> list[list[str]]:
     for i in range(len(ids) - 1):
         for j in range(i + 1, len(ids)):
             pairs.append([ids[i], ids[j]])
+    logger.info("Made full {} pairs out of {} imgs".format(len(pairs), len(ids)))
     return pairs
 
 

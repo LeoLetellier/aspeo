@@ -2,6 +2,8 @@ import tomli
 import os
 import sys
 import subprocess
+import logging
+logger = logging.getLogger(__name__)
 
 BLACK_LEFT = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "assets", "black_left.tsai"
@@ -31,6 +33,7 @@ def sh(cmd: str, shell=True):
     ````
 
     """
+    logger.info('>> ' + cmd)
     subprocess.run(
         cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
     )

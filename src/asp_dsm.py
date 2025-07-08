@@ -81,7 +81,7 @@ def run_stereo(pairs, sources, fragment, params, debug):
 
         if "stop-point" in params["stereo"]:
             params["stereo"].pop("stop-point")
-        stereo(mps, cams, fragment[i], params, debug=debug)
+        stereo(mps, cams, fragment[i], params, debug=debug, dem=params["dem"])
 
 
 if __name__ == "__main__":

@@ -41,16 +41,15 @@ def map_projection(params: dict, debug=False):
         bundle_adjust(imgs, cams, output_ba, params, parallel=parallel, debug=debug)
         params["map-project"]["bundle-adjust-prefix"] = output_ba
 
-    if "crop" in params.keys():
-        pass # todo
-
     if params.get("mp-pan", True):
         for s in sources:
-            map_project(dem, s["pan"], s["cam"], output_mp_pan, params, debug=debug)
+            output = output_mp_pan + s["id"] + ".tif"
+            map_project(dem, s["pan"], s["cam"], output, params, debug=debug)
 
     if params.get("mp-ms", True) and got_ms:
         for s in sources:
-            map_project(dem, s["ms"], s["cam"], output_mp_ms, params, debug=debug)
+            output = output_mp_ms + s["id"] + ".tif"
+            map_project(dem, s["ms"], s["cam"], output, params, debug=debug)
 
     if "pansharpening" in params.keys():
         for s in sources:

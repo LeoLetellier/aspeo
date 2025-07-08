@@ -78,12 +78,17 @@ if __name__ == "__main__":
 
     if arguments["--verbose"]:
         if arguments["--debug"]:
-            logging.basicConfig(level=logging.DEBUG)
+            logging.basicConfig(
+                level=logging.DEBUG, format="%(levelname)s: %(asctime)s | %(message)s"
+            )
         else:
-            logging.basicConfig(level=logging.INFO)
+            logging.basicConfig(
+                level=logging.INFO, format="%(levelname)s: %(asctime)s | %(message)s"
+            )
     else:
-        logging.basicConfig(level=logging.WARNING)
-    logging.basicConfig(format="%(levelname)s: %(asctime)s | %(message)s")
+        logging.basicConfig(
+            level=logging.WARNING, format="%(levelname)s: %(asctime)s | %(message)s"
+        )
     logger.debug("CLI arguments: {}".format(arguments))
 
     resolve_cli(arguments)

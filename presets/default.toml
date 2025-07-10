@@ -2,53 +2,53 @@ name = "Name"
 description = "Desc"
 output = "."
 dem = ""
-src_folder = ""
-pan_prefix = ""
-pan_suffix = ""
-ms_prefix = ""
-ms_suffix = ""
-cam_prefix = ""
-cam_suffix = ""
-mp_prefix = ""
-mp_suffix = ""
+src-folder = ""
+pan-prefix = ""
+pan-suffix = ""
+ms-prefix = ""
+ms-suffix = ""
+cam-prefix = ""
+cam-suffix = ""
+mp-prefix = ""
+mp-suffix = ""
 # source = "smthg"
 # source-header = true
 pairs = "pairs.txt"
 pairs-header = true
 derive-pan = false
-force = true        # relaunch all
-mp-pan = false
-mp-ms = false
+mp-pan = 0.7
+mp-ms = 2
 
 [[source]]
-id = "id src"  # ["id1", "id2"]
+id = "id src" # ["id1", "id2"]
 pan = ""
-ms = ""
 cam = ""
-mp = "path mp"
+ms = ""
+cam-ms = ""
+mp = ""
 
-# bundle_adjust
+# bundle_adjust > [MP]
 [bundle-adjust] # BA
 
-# gdal_translate
-[crop] # CROP
-
-# mapproject
+# mapproject > [MP]
 [map-project-pan] # MP_PAN
 
-# mapproject
+# mapproject > [MP]
 [map-project-ms] # MP_MS
 
-# gdal_pansharpening.py
+# gdal_translate > [MP]
+[crop] # CROP
+
+# gdal_pansharpening.py > [MP]
 [pansharpening] # PANSHARP
 
-# orbitviz
+# orbitviz > [MP]
 [orbitviz] # ORB
 
-# image_align
+# image_align > [PT]
 [image-align] # ALIGNED
 
-# parallel_stereo
+# parallel_stereo > [PT / DSM]
 [stereo] # STEREO > PAIR
 t = "pinhole"
 individually-normalize = true
@@ -64,14 +64,14 @@ subpixel-mode = 2
 subpixel-kernel = [35, 35]
 stop-point = 5
 
-# corr_eval
+# corr_eval > [PT]
 [corr-eval] # in STEREO ncc
 
-# pc_align
+# pc_align > [DSM]
 [pc-align] # in STEREO dem-aligned
 
-# point2dem
+# point2dem > [DSM]
 [point2dem] # in STEREO dem.tif
 
-# dem_mosaic
+# dem_mosaic > [DSM]
 [dem-mosaic] # in output dir

@@ -2,33 +2,33 @@ name = "Name"
 description = "Desc"
 output = "."
 dem = "dem"
-src_folder = "source"
-pan_prefix = "IMG_"
-pan_suffix = "-1.tif"
+src-folder = "source"
+pan-prefix = "IMG_"
+pan-suffix = "-1.tif"
 # pairs = "example/pairs.txt"
 # pairs-header = true
 derive-pan = true
+mp-pan = 0.7
+mp-ms = 2
 
 [[source]]
 id = "date1"
 cam = "cam1.xml"
+pan = "pan1"
 ms = "ms1"
+cam-ms = "mscam"
 
 [[source]]
 id = "date2"
 cam = "cam2.xml"
+pan = "pan2"
 ms = "ms2"
+cam-ms = "mscam2"
 
 [bundle-adjust]
-d = true
-dummy = "yummy"
 
 [map-project]
-d = true
-dummy = "yummy"
 
 [pansharpening]
-some-option = true
 
 [orbitviz]
-dummy = "display me"

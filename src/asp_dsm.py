@@ -27,6 +27,7 @@ from params import (
     get_pairs,
     ids_from_source,
     source_from_id,
+    check_for_mp,
     DIR_STEREO,
     PREF_STEREO,
 )
@@ -38,6 +39,9 @@ def dsm_generation(params: dict, debug=False):
     output_dir = params.get("output", ".")
     sources = get_sources(params)
     pairs = get_pairs(params, ids_from_source(sources))
+    sources = check_for_mp(sources, output_dir)
+    if sources is None:
+        raise ValueError("No map projected images defined or no previous mp run found")
     fragment = []
 
     for p in pairs:

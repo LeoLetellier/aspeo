@@ -25,6 +25,7 @@ from params import (
     source_from_id,
     ids_from_source,
     make_full_pairs,
+    check_for_mp,
 )
 from params import DIR_STEREO, PREF_STEREO, DIR_ALIGNED
 import os
@@ -53,6 +54,9 @@ def pixel_tracking(params: dict, debug=False):
         pairs = get_pairs(params, ids, first=2)
     else:
         pairs = make_full_pairs(ids)
+    sources = check_for_mp(sources, output_dir)
+    if sources is None:
+        raise ValueError("No map projected images defined or no previous mp run found")
     aligned = None
 
     if "align" in params.keys():

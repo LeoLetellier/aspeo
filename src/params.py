@@ -6,9 +6,9 @@ logger = logging.getLogger(__name__)
 KEYS = ["id", "pan", "ms", "cam", "mp"]
 
 DIR_BA = "BA/ba"
-DIR_MP_PAN = "MP/PAN/mp-pan"
-DIR_MP_MS = "MP/MS/mp-ms"
-DIR_PANSHARP = "MP/PANSHARP/pansharp"
+DIR_MP_PAN = "MP/PAN/mp-pan-"
+DIR_MP_MS = "MP/MS/mp-ms-"
+DIR_PANSHARP = "MP/PANSHARP/pansharp-"
 DIR_ALIGNED = "MP/ALIGNED/align-"
 DIR_STEREO = "STEREO/"
 PREF_STEREO = "stereo"
@@ -68,11 +68,11 @@ def get_sources(params: dict, first=None) -> list[dict]:
 
 def extend_paths(sources: list[dict], params: dict) -> list[dict]:
     """Extend the images paths by adding the optional source folder, prefix and suffix"""
-    src_folder = params.get("src_folder", "")
+    src_folder = params.get("src-folder", "")
 
     def extend(key: str):
-        pref = params.get(key + "_prefix", "")
-        suff = params.get(key + "_suffix", "")
+        pref = params.get(key + "-prefix", "")
+        suff = params.get(key + "-suffix", "")
         if s.get(key, None) is not None:
             s[key] = os.path.join(src_folder, pref + s[key] + suff)
 
@@ -150,3 +150,15 @@ def source_from_id(id: str, sources: list[dict]) -> dict:
         if s["id"] == id:
             return s
     raise ValueError("id does not exist in sources")
+
+
+def check_for_mp(sources: dict, working_dir: str) -> dict | None:
+    """Try to fetch MP images resulting from aspeo mp"""
+    mp_pan_folder = os.path.join(os.path.abspath(working_dir), DIR_MP_PAN)
+    for s in sources:
+        mp_target = mp_pan_folder + s["id"] + ".tif"
+        if os.path.isfile(mp_target):
+            s["mp"] = mp_target
+        elif s.get("mp", None) is None:
+            return None
+    return sources

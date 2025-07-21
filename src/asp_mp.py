@@ -22,9 +22,13 @@ from params import DIR_BA, DIR_MP_PAN, DIR_MP_MS, DIR_PANSHARP
 import os
 import docopt
 from copy import deepcopy
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def map_projection(params: dict, debug=False):
+    logger.info("Begginning map projection")
     output_dir = params.get("output", ".")
     sources = get_sources(params)
     output_ba = os.path.join(output_dir, DIR_BA)
@@ -38,6 +42,7 @@ def map_projection(params: dict, debug=False):
     got_ms = all([s.get("ms", None) is not None for s in sources])
 
     if "bundle-adjust" in params.keys():
+        logger.info("Bundle adjust")
         imgs = [s["pan"] for s in sources]
         cams = [s["cam"] for s in sources]
         parallel = len(imgs) > 3
@@ -47,6 +52,7 @@ def map_projection(params: dict, debug=False):
         params["map-project"]["bundle-adjust-prefix"] = output_ba
 
     if mp_pan is not None:
+        logger.info("Map project Panchromatic (P) images")
         mp_params = deepcopy(params)
         mp_params["map-project"]["tr"] = mp_pan
         for s in sources:
@@ -55,6 +61,7 @@ def map_projection(params: dict, debug=False):
         del mp_params
 
     if mp_ms is not None and got_ms:
+        logger.info("Map project Multi Spectral (MS) images")
         ms_params = deepcopy(params)
         ms_params["map-project"]["tr"] = mp_ms
         for s in sources:
@@ -63,6 +70,7 @@ def map_projection(params: dict, debug=False):
         del ms_params
 
     if "pansharpening" in params.keys():
+        logger.info("Creating pansharpened images")
         for s in sources:
             gdal_pansharp(
                 s["pan"],
@@ -73,6 +81,7 @@ def map_projection(params: dict, debug=False):
             )
 
     if "orbitviz" in params.keys():
+        logger.info("Generating orbit view (KML)")
         imgs = [s["pan"] for s in sources]
         cams = [s["cam"] for s in sources]
         orbit_viz(imgs, cams, output_dir + "/orbits.kml", params, debug=debug)

@@ -16,9 +16,7 @@ Usage:
     aspeo.py
     aspeo.py -h | --help
     aspeo.py new [<preset>] [--path <path>]
-    aspeo.py pt <toml> [--debug | -d] [-v | --verbose]
-    aspeo.py mp <toml> [--debug | -d] [-v | --verbose]
-    aspeo.py dsm <toml> [--debug | -d] [-v | --verbose]
+    aspeo.py (mp | dsm | pt) <toml> [--debug | -d] [-v | --verbose]
 
 Options:
     -h --help         Display command details

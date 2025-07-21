@@ -17,6 +17,9 @@ import docopt
 import os
 from os.path import splitext, basename, dirname, join
 from shutil import copyfile
+import logging
+
+logger = logging.getLogger(__name__)
 
 from asp import parse_toml
 
@@ -51,6 +54,7 @@ class Preset:
 def generate_toml(preset, path=None):
     if preset is None:
         preset = "default"
+    logger.info("Using preset: {}".format(preset))
     target = path if type(path) is str and path is not None else "./aspeo.toml"
 
     preset = Preset(preset)
@@ -58,7 +62,7 @@ def generate_toml(preset, path=None):
     copyfile(preset.path(), target)
     print(target)
     write_version(target)
-    print("Successfully wrote {} in the working directory!".format(target))
+    logger.info("Successfully wrote {} in the working directory!".format(target))
 
 
 def write_version(file):

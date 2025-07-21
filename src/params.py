@@ -28,6 +28,7 @@ def get_sources(params: dict, first=None) -> list[dict]:
         return extend_paths(source, params)
     if type(source) is list:
         logger.info("Source is described directly in toml")
+        source_pleiades_autofill(params)
         return extend_paths(source, params)
 
     logger.info("Reading source from file: {}".format(source))
@@ -65,9 +66,7 @@ def get_sources(params: dict, first=None) -> list[dict]:
         for k in KEYS:
             s[k] = c[key_index[k]]
         source.append(s)
-
-    source_pleiades_autofill(params)
-
+    
     return extend_paths(source, params)
 
 
@@ -198,7 +197,7 @@ def retrieve_max2p_bbox(params: dict) -> list:
         else:
             raise ValueError("dim is not provided in toml sources")
     all_bbox = np.array(all_bbox)
-    all_bbox = [np.min(all_bbox[:, :, 0]), np.max(all_bbox[:, :, 1]), np.min(all_bbox[:, :, 2]), np.max(all_bbox[:, :, 3])]
+    all_bbox = [np.min(all_bbox[:, 0]), np.max(all_bbox[:, 1]), np.min(all_bbox[:, 2]), np.max(all_bbox[:, 3])]
     # 2% padding for security
     bbox_width = all_bbox[1] - all_bbox[0]
     bbox_height = all_bbox[3] - all_bbox[2]
@@ -211,9 +210,13 @@ def retrieve_max2p_bbox(params: dict) -> list:
 
 def source_pleiades_autofill(params: dict):
     src = params.get("src-folder", "")
+    auto_fill = False
     for s in params["source"]:
         pld = s.get("pleiades", None)
         if pld is not None:
+            if not auto_fill:
+                logger.info("autofill from pleiades folder")
+                auto_fill = True
             maybe_dim = glob.glob(os.path.join(src, pld) + "/DIM*.XML")
             if len(maybe_dim) == 0:
                 raise ValueError('pleiades folder is empty (no dim)')
@@ -221,3 +224,5 @@ def source_pleiades_autofill(params: dict):
             s["dim"] = maybe_dim[0]
             s["cam"] = "RPC_" + heart + ".XML"
             s["pan"] = "IMG_" + heart + ".TIF"
+    if not auto_fill:
+        logger.info("no autofill")

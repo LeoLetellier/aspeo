@@ -1,5 +1,6 @@
 import os
 import logging
+import glob
 import xml.etree.ElementTree as ET
 import numpy as np
 
@@ -64,6 +65,8 @@ def get_sources(params: dict, first=None) -> list[dict]:
         for k in KEYS:
             s[k] = c[key_index[k]]
         source.append(s)
+
+    source_pleiades_autofill(params)
 
     return extend_paths(source, params)
 
@@ -204,3 +207,17 @@ def retrieve_max2p_bbox(params: dict) -> list:
                         all_bbox[2] - 0.02 * bbox_height,
                         all_bbox[3] + 0.02 * bbox_height]
     return global_2p_bbox
+
+
+def source_pleiades_autofill(params: dict):
+    src = params.get("src-folder", "")
+    for s in params["source"]:
+        pld = s.get("pleiades", None)
+        if pld is not None:
+            maybe_dim = glob.glob(os.path.join(src, pld) + "/DIM*.XML")
+            if len(maybe_dim) == 0:
+                raise ValueError('pleiades folder is empty (no dim)')
+            heart = maybe_dim[0][4:-4]
+            s["dim"] = maybe_dim[0]
+            s["cam"] = "RPC_" + heart + ".XML"
+            s["pan"] = "IMG_" + heart + ".TIF"

@@ -1,8 +1,8 @@
 name = "Name"
 description = "Desc"
 output = "."
-src_folder = "./GEOTIFF/"
-mp_suffix = ".VV.mod_log.tif"
+src-folder = "./GEOTIFF/"
+mp-suffix = ".VV.mod_log.tif"
 pairs = "./example/amster_pairs.txt"
 pairs-header = true
 

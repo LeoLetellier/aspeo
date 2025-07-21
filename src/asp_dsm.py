@@ -21,6 +21,7 @@ from asp import (
     point2dem,
     dem_mosaic,
     parse_toml,
+    sh
 )
 from params import (
     get_sources,
@@ -28,11 +29,15 @@ from params import (
     ids_from_source,
     source_from_id,
     check_for_mp,
+    retrieve_max2p_bbox,
     DIR_STEREO,
     PREF_STEREO,
 )
 import os
 import docopt
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def dsm_generation(params: dict, debug=False):
@@ -43,6 +48,15 @@ def dsm_generation(params: dict, debug=False):
     if sources is None:
         raise ValueError("No map projected images defined or no previous mp run found")
     fragment = []
+
+    if params.get("dem", None) is None:
+        logger.info("dem is not provided in parameters")
+        if sh("my_getDemFile.py -h").returncode == 1:
+            logger.error("my_getDemFile is not available for dem retrieval")
+            raise ValueError('my_getDemFile is not available for dem retrieval')
+        else:
+            logger.info("automatically retrieve dem using my_getDemFile")
+            params["dem"] = retrieve_dem(params)
 
     for p in pairs:
         frag = os.path.join(output_dir, DIR_STEREO, p[0] + "_" + p[1])
@@ -86,6 +100,20 @@ def run_stereo(pairs, sources, fragment, params, debug):
         if "stop-point" in params["stereo"]:
             params["stereo"].pop("stop-point")
         stereo(mps, cams, fragment[i], params, debug=debug, dem=params["dem"])
+
+
+def retrieve_dem(params: dict) -> str:
+    bbox = retrieve_max2p_bbox(params)
+    long1, long2, lat1, lat2 = bbox[0], bbox[1], bbox[2], bbox[3]
+    output = params.get("output", ".")
+    dst = os.path.join(output, "cop_dem30_{}_{}_{}_{}".format(int(long1), int(long2), int(lat1), int(lat2)))
+    sh("my_getDemFile.py -s COP_DEM --bbox={},{},{},{} -c /data/ARCHIVES/DEM/COP-DEM_GLO-30-DTED/DEM".format(long1, long2, lat1, lat2))
+    sh("gdal_translate -of Gtiff {} {}".format(dst + ".dem", dst + ".tif"))
+
+    os.remove(dst + ".dem")
+    os.remove(dst + ".dem.aux.xml")
+    os.remove(dst + ".dem.rsc")
+    return dst + ".tif"
 
 
 if __name__ == "__main__":

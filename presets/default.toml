@@ -31,10 +31,7 @@ mp = ""
 [bundle-adjust] # BA
 
 # mapproject > [MP]
-[map-project-pan] # MP_PAN
-
-# mapproject > [MP]
-[map-project-ms] # MP_MS
+[map-project] # MP/PAN / MP/MS
 
 # gdal_translate > [MP]
 [crop] # CROP

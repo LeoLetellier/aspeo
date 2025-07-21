@@ -3,9 +3,9 @@ description = "Desc"
 output = "."
 pairs = "example/pairs.txt"
 pairs-header = true
-src_folder = "raw_folder/"
-mp_prefix = "pref_"
-mp_suffix = "_suff.file"
+src-folder = "raw_folder/"
+mp-prefix = "pref_"
+mp-suffix = "_suff.file"
 
 # [align]
 

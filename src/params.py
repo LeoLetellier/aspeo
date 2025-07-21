@@ -1,5 +1,7 @@
 import os
 import logging
+import xml.etree.ElementTree as ET
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +154,7 @@ def source_from_id(id: str, sources: list[dict]) -> dict:
     raise ValueError("id does not exist in sources")
 
 
-def check_for_mp(sources: dict, working_dir: str) -> dict | None:
+def check_for_mp(sources: list[dict], working_dir: str) -> list[dict] | None:
     """Try to fetch MP images resulting from aspeo mp"""
     mp_pan_folder = os.path.join(os.path.abspath(working_dir), DIR_MP_PAN)
     for s in sources:
@@ -162,3 +164,43 @@ def check_for_mp(sources: dict, working_dir: str) -> dict | None:
         elif s.get("mp", None) is None:
             return None
     return sources
+
+
+def get_dim_bbox(dim: str) -> list[float]:
+    root = ET.parse(dim).getroot()
+    bbox_polygon = root.findall("./Dataset_Content/Dataset_Extent/Vertex")
+    bbox_points = []
+    for b in bbox_polygon:
+        bbox_points.append([float(b.find("./LON").text), float(b.find("./LAT").text)])
+    return points_to_bbox(bbox_points)
+
+
+def points_to_bbox(points: list):
+    """
+    Convert a list of points (x, y) into a bbox, i.e retrieve the min max on each axis
+
+    :param points: (N, 2) list of float / integer. Can be (lat, long), (x, y), ...
+    :returns bbox: bounding box [x_min, x_max, y_min, y_max]
+    """
+    min = np.min(points, axis=0)
+    max = np.max(points, axis=0)
+    return [min[0], max[0], min[1], max[1]]
+
+
+def retrieve_max2p_bbox(params: dict) -> list:
+    all_bbox = []
+    for s in params["source"]:
+        if s.get("dim", None) is not None:
+            all_bbox.append(get_dim_bbox(s["dim"]))
+        else:
+            raise ValueError("dim is not provided in toml sources")
+    all_bbox = np.array(all_bbox)
+    all_bbox = [np.min(all_bbox[:, :, 0]), np.max(all_bbox[:, :, 1]), np.min(all_bbox[:, :, 2]), np.max(all_bbox[:, :, 3])]
+    # 2% padding for security
+    bbox_width = all_bbox[1] - all_bbox[0]
+    bbox_height = all_bbox[3] - all_bbox[2]
+    global_2p_bbox = [all_bbox[0] - 0.02 * bbox_width,
+                        all_bbox[1] + 0.02 * bbox_width,
+                        all_bbox[2] - 0.02 * bbox_height,
+                        all_bbox[3] + 0.02 * bbox_height]
+    return global_2p_bbox

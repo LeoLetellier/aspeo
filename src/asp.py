@@ -35,7 +35,7 @@ def sh(cmd: str, shell=True):
 
     """
     logger.info(">> " + cmd)
-    subprocess.run(
+    return subprocess.run(
         cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
     )
 

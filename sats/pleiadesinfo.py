@@ -122,15 +122,15 @@ class PleiadesDisplay:
 
         print(message)
 
+    def export_kml(self, path):
+        pass
+
 
 def display_geom(geom):
     disp = ""
     for g in geom:
         disp += g[1] + "," + g[0] + " "
     return disp
-
-    def export_kml(self, path):
-        pass
 
 
 if __name__ == "__main__":

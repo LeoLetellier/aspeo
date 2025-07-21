@@ -1,5 +1,5 @@
-name = "ERS preset (4x8)"
-description = "Preset to get started with full resolution ERS images"
+name = "Envisat preset (4x8)"
+description = "Preset to get started with full resolution Envisat images"
 output = "."
 src-folder = "./GEOTIFF/"
 mp-suffix = ".VV.mod_log.tif"

@@ -66,7 +66,7 @@ def get_sources(params: dict, first=None) -> list[dict]:
         for k in KEYS:
             s[k] = c[key_index[k]]
         source.append(s)
-    
+
     return extend_paths(source, params)
 
 

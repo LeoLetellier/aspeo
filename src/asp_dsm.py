@@ -52,12 +52,12 @@ def dsm_generation(params: dict, debug=False):
 
     if params.get("dem", None) is None:
         logger.info("dem is not provided in parameters")
-        if sh("my_getDemFile.py -h").returncode == 1:
+        if sh("my_getDemFile.py -h", quiet=True).returncode == 1:
             logger.error("my_getDemFile is not available for dem retrieval")
             raise ValueError('my_getDemFile is not available for dem retrieval')
         else:
             logger.info("automatically retrieve dem using my_getDemFile")
-            params["dem"] = retrieve_dem(params)
+            params["dem"] = retrieve_dem(params, debug=debug)
 
     for p in pairs:
         frag = os.path.join(output_dir, DIR_STEREO, p[0] + "_" + p[1])

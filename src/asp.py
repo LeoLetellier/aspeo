@@ -21,7 +21,7 @@ def parse_toml(file: str) -> dict:
     return toml
 
 
-def sh(cmd: str, shell=True):
+def sh(cmd: str, shell=True, quiet=False):
     """
     Launch a shell command
 
@@ -35,6 +35,9 @@ def sh(cmd: str, shell=True):
 
     """
     logger.info(">> " + cmd)
+
+    if quiet:
+        return subprocess.run(cmd, shell=shell)
     return subprocess.run(
         cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
     )

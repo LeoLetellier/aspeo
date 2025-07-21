@@ -16,8 +16,8 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import map_project, bundle_adjust, parse_toml, gdal_pansharp, orbit_viz
-from params import get_sources
+from asp import map_project, bundle_adjust, parse_toml, gdal_pansharp, orbit_viz, sh
+from params import get_sources, retrieve_max2p_bbox
 from params import DIR_BA, DIR_MP_PAN, DIR_MP_MS, DIR_PANSHARP
 import os
 import docopt
@@ -37,6 +37,15 @@ def map_projection(params: dict, debug=False):
     output_pansharp = os.path.join(output_dir, DIR_PANSHARP)
     mp_pan = params.get("mp-pan", None)
     mp_ms = params.get("mp-ms", None)
+
+    if params.get("dem", None) is None:
+        logger.info("dem is not provided in parameters")
+        if sh("my_getDemFile.py -h", quiet=True).returncode == 1:
+            logger.error("my_getDemFile is not available for dem retrieval")
+            raise ValueError('my_getDemFile is not available for dem retrieval')
+        else:
+            logger.info("automatically retrieve dem using my_getDemFile")
+            params["dem"] = retrieve_dem(params, debug=debug)
 
     dem = params["dem"]
     got_ms = all([s.get("ms", None) is not None for s in sources])
@@ -85,6 +94,27 @@ def map_projection(params: dict, debug=False):
         imgs = [s["pan"] for s in sources]
         cams = [s["cam"] for s in sources]
         orbit_viz(imgs, cams, output_dir + "/orbits.kml", params, debug=debug)
+
+
+def retrieve_dem(params: dict, debug=False) -> str:
+    bbox = retrieve_max2p_bbox(params)
+    long1, long2, lat1, lat2 = bbox[0], bbox[1], bbox[2], bbox[3]
+    output = params.get("output", ".")
+    dst = os.path.join(output, "cop_dem30_{}_{}_{}_{}".format(int(long1), int(long2), int(lat1), int(lat2)))
+
+    cmd1 = "my_getDemFile.py -s COP_DEM --bbox={},{},{},{} -c /data/ARCHIVES/DEM/COP-DEM_GLO-30-DTED/DEM".format(long1, long2, lat1, lat2)
+    cmd2 = "gdal_translate -of Gtiff {} {}".format(dst + ".dem", dst + ".tif")
+    if not debug:
+        sh(cmd1)
+        sh(cmd2)
+
+        os.remove(dst + ".dem")
+        os.remove(dst + ".dem.aux.xml")
+        os.remove(dst + ".dem.rsc")
+    else:
+        print(cmd1)
+        print(cmd2)
+    return dst + ".tif"
 
 
 if __name__ == "__main__":

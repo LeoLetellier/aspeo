@@ -1,0 +1,32 @@
+name = "Name"
+description = "Desc"
+output = "."
+dem = "dem"
+src-folder = "source"
+pairs = "example/pairs_dsm.txt"
+pairs-header = true
+derive-pan = true
+
+[[source]]
+id = "20210526"
+pleiades = "pl1"
+
+[[source]]
+id = "20230526"
+pleiades = "pl2"
+
+[[source]]
+id = "20250526"
+pleiades = "pl3"
+
+[stereo]
+yummy = true
+
+[pc-align]
+dummy = true
+
+[point2dem]
+somy = true
+
+[dem-mosaic]
+cookie = true

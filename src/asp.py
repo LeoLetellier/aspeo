@@ -1,4 +1,3 @@
-import tomli
 import os
 import sys
 import subprocess
@@ -14,14 +13,7 @@ BLACK_RIGHT = os.path.join(
 )
 
 
-def parse_toml(file: str) -> dict:
-    """Open a toml file as a dict"""
-    with open(file, "rb") as f:
-        toml = tomli.load(f)
-    return toml
-
-
-def sh(cmd: str, shell=True, quiet=False):
+def sh(cmd: str, shell=True, debug=False):
     """
     Launch a shell command
 
@@ -36,11 +28,10 @@ def sh(cmd: str, shell=True, quiet=False):
     """
     logger.info(">> " + cmd)
 
-    if quiet:
-        return subprocess.run(cmd, shell=shell)
-    return subprocess.run(
-        cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
-    )
+    if not debug:
+        return subprocess.run(
+            cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
+        )
 
 
 def arg_to_str(arg) -> str:
@@ -101,10 +92,7 @@ def stereo(
         params, arg_to_str(images), arg_to_str(cameras), output, dem
     )
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def corr_eval(
@@ -115,10 +103,7 @@ def corr_eval(
 
     cmd = "corr_eval {} {} {} {} {}".format(params, left, right, disp, output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def map_project(
@@ -129,10 +114,7 @@ def map_project(
 
     cmd = "mapproject {} {} {} {} {}".format(params, dem, image, camera, output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def bundle_adjust(
@@ -157,10 +139,7 @@ def bundle_adjust(
 
     if parallel:
         cmd = "parallel_" + cmd
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def pc_align(
@@ -175,10 +154,7 @@ def pc_align(
 
     cmd = "pc_align {} {} {} -o {}".format(params, reference, source, output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def point2dem(
@@ -192,10 +168,7 @@ def point2dem(
 
     cmd = "point2dem {} {} -o {}".format(params, point_cloud, output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def dem_mosaic(
@@ -209,10 +182,7 @@ def dem_mosaic(
 
     cmd = "dem_mosaic {} {} -o {}".format(params, arg_to_str(dems), output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def image_align(
@@ -223,10 +193,7 @@ def image_align(
 
     cmd = "image_align {} {} {} -o {}".format(params, reference, source, output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def orbit_viz(
@@ -239,10 +206,7 @@ def orbit_viz(
         params, arg_to_str(imgs), arg_to_str(cams), output
     )
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def gdal_crop(input: str, output: str, parameters: dict, debug=False):
@@ -251,10 +215,7 @@ def gdal_crop(input: str, output: str, parameters: dict, debug=False):
 
     cmd = "gdal_translate {} {} {}".format(params, input, output)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)
 
 
 def gdal_pansharp(
@@ -266,7 +227,4 @@ def gdal_pansharp(
 
     cmd = "gdal_pansharpen {} {} {} {}".format(panchro, arg_to_str(ms), output, params)
 
-    if debug:
-        print(cmd)
-    else:
-        sh(cmd)
+    sh(cmd, debug=debug)

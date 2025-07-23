@@ -15,7 +15,7 @@ parameter file.
 Usage:
     aspeo.py
     aspeo.py -h | --help
-    aspeo.py new [<preset>] [--path <path>]
+    aspeo.py new [<preset>] [--path <path>] [-v | --verbose]
     aspeo.py (mp | dsm | pt) <toml> [--debug | -d] [-v | --verbose]
 
 Options:
@@ -26,7 +26,7 @@ Options:
 
 """
 
-from asp import parse_toml
+from params import parse_params
 from asp_pt import pixel_tracking
 from asp_mp import map_projection
 from asp_new import generate_toml, VERSION
@@ -48,19 +48,19 @@ def resolve_cli(arguments):
     elif arguments["pt"]:
         toml = arguments["<toml>"]
         debug = arguments["--debug"]
-        params = parse_toml(toml)
+        params = parse_params(toml)
         pixel_tracking(params, debug=debug)
 
     elif arguments["mp"]:
         toml = arguments["<toml>"]
         debug = arguments["--debug"]
-        params = parse_toml(toml)
+        params = parse_params(toml)
         map_projection(params, debug=debug)
 
     elif arguments["dsm"]:
         toml = arguments["<toml>"]
         debug = arguments["--debug"]
-        params = parse_toml(toml)
+        params = parse_params(toml)
         dsm_generation(params, debug=debug)
 
     else:

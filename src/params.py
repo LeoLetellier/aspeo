@@ -2,11 +2,12 @@ import os
 import logging
 import glob
 import xml.etree.ElementTree as ET
+import tomli
 import numpy as np
 
 logger = logging.getLogger(__name__)
 
-KEYS = ["id", "pan", "ms", "cam", "mp"]
+KEYS = ["id", "pan", "ms", "cam", "mp", "cam-ms", "pleiades"]
 
 DIR_BA = "BA/ba"
 DIR_MP_PAN = "MP/PAN/mp-pan-"
@@ -17,9 +18,22 @@ DIR_STEREO = "STEREO/"
 PREF_STEREO = "stereo"
 
 
+def parse_params(file: str) -> dict:
+    """Open a toml file as a dict"""
+    with open(file, "rb") as f:
+        params = tomli.load(f)
+    params["root"] = os.path.dirname(file)
+    params["src-folder"] = os.path.abspath(
+        os.path.join(params["root"], params.get("src-folder", ""))
+    )
+    return params
+
+
 def get_sources(params: dict, first=None) -> list[dict]:
     """Create the source dict from a file or raw definition"""
     source = params.get("source", None)
+    if params.get("src-folder", None) is not None:
+        params["src-folder"] = os.path.abspath(params["src-folder"])
     if source is None:
         logger.info("Source is not explicitly described in toml, inferring from pairs")
         pairs = get_pairs(params, first=first)
@@ -73,6 +87,7 @@ def get_sources(params: dict, first=None) -> list[dict]:
 def extend_paths(sources: list[dict], params: dict) -> list[dict]:
     """Extend the images paths by adding the optional source folder, prefix and suffix"""
     src_folder = params.get("src-folder", "")
+    root = params["root"]
 
     def extend(key: str):
         pref = params.get(key + "-prefix", "")
@@ -90,6 +105,11 @@ def extend_paths(sources: list[dict], params: dict) -> list[dict]:
 
         for key in KEYS[1:]:
             extend(key)
+
+    if params.get("pairs", None) is not None:
+        params["pairs"] = os.path.join(root, params["pairs"])
+    if type(params["source"]) is str:
+        params["source"] = os.path.join(root, params["source"])
 
     return sources
 
@@ -168,7 +188,10 @@ def check_for_mp(sources: list[dict], working_dir: str) -> list[dict] | None:
     return sources
 
 
-def get_dim_bbox(dim: str) -> list[float]:
+def get_dim_bbox(dim: str, debug=False) -> list[float]:
+    if debug:
+        return [0, 1, 0, 1]
+    logger.info("Parse XML: {}".format(dim))
     root = ET.parse(dim).getroot()
     bbox_polygon = root.findall("./Dataset_Content/Dataset_Extent/Vertex")
     bbox_points = []
@@ -189,7 +212,7 @@ def points_to_bbox(points: list):
     return [min[0], max[0], min[1], max[1]]
 
 
-def retrieve_max2p_bbox(params: dict) -> list:
+def retrieve_max2p_bbox(params: dict, debug=False) -> list:
     all_bbox = []
     for s in params["source"]:
         if s.get("dim", None) is not None:
@@ -197,32 +220,44 @@ def retrieve_max2p_bbox(params: dict) -> list:
         else:
             raise ValueError("dim is not provided in toml sources")
     all_bbox = np.array(all_bbox)
-    all_bbox = [np.min(all_bbox[:, 0]), np.max(all_bbox[:, 1]), np.min(all_bbox[:, 2]), np.max(all_bbox[:, 3])]
+    all_bbox = [
+        np.min(all_bbox[:, 0]),
+        np.max(all_bbox[:, 1]),
+        np.min(all_bbox[:, 2]),
+        np.max(all_bbox[:, 3]),
+    ]
     # 2% padding for security
     bbox_width = all_bbox[1] - all_bbox[0]
     bbox_height = all_bbox[3] - all_bbox[2]
-    global_2p_bbox = [all_bbox[0] - 0.02 * bbox_width,
-                        all_bbox[1] + 0.02 * bbox_width,
-                        all_bbox[2] - 0.02 * bbox_height,
-                        all_bbox[3] + 0.02 * bbox_height]
+    global_2p_bbox = [
+        all_bbox[0] - 0.02 * bbox_width,
+        all_bbox[1] + 0.02 * bbox_width,
+        all_bbox[2] - 0.02 * bbox_height,
+        all_bbox[3] + 0.02 * bbox_height,
+    ]
     return global_2p_bbox
 
 
-def source_pleiades_autofill(params: dict):
+def source_pleiades_autofill(params: dict, debug=False):
     src = params.get("src-folder", "")
     auto_fill = False
+    pref = params.get("pleiades-prefix", "")
+    suff = params.get("pleiades-suffix", "")
     for s in params["source"]:
-        pld = s.get("pleiades", None)
+        pld = pref + s.get("pleiades", None) + suff
         if pld is not None:
             if not auto_fill:
-                logger.info("autofill from pleiades folder")
+                logger.info("Autofill from pleiades folder")
                 auto_fill = True
-            maybe_dim = glob.glob(os.path.join(src, pld) + "/DIM*.XML")
+            search_pattern = os.path.join(src, pld) + "/DIM*.XML"
+            maybe_dim = glob.glob(search_pattern)
             if len(maybe_dim) == 0:
-                raise ValueError('pleiades folder is empty (no dim)')
+                raise ValueError(
+                    "pleiades folder is empty (no dim): {}".format(search_pattern)
+                )
             heart = maybe_dim[0][4:-4]
             s["dim"] = maybe_dim[0]
             s["cam"] = "RPC_" + heart + ".XML"
             s["pan"] = "IMG_" + heart + ".TIF"
     if not auto_fill:
-        logger.info("no autofill")
+        logger.info("No autofill from pleiades folder")

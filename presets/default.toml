@@ -2,15 +2,7 @@ name = "Name"
 description = "Desc"
 output = "."
 dem = ""
-src-folder = ""
-pan-prefix = ""
-pan-suffix = ""
-ms-prefix = ""
-ms-suffix = ""
-cam-prefix = ""
-cam-suffix = ""
-mp-prefix = ""
-mp-suffix = ""
+# source other than id > -prefix -suffix
 # source = "smthg"
 # source-header = true
 pairs = "pairs.txt"
@@ -26,6 +18,7 @@ cam = ""
 ms = ""
 cam-ms = ""
 mp = ""
+pleiades = ""
 
 # bundle_adjust > [MP]
 [bundle-adjust] # BA
@@ -47,19 +40,6 @@ mp = ""
 
 # parallel_stereo > [PT / DSM]
 [stereo] # STEREO > PAIR
-t = "pinhole"
-individually-normalize = true
-alignment-method = "none"
-threads-multiprocess = 5
-process = 5
-no-bigtiff = true
-tif-compress = "Deflate"
-corr-kernel = [21, 21]
-cost-mode = 2
-stereo-algorithm = "asp_bm"
-subpixel-mode = 2
-subpixel-kernel = [35, 35]
-stop-point = 5
 
 # corr_eval > [PT]
 [corr-eval] # in STEREO ncc

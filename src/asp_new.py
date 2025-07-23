@@ -21,9 +21,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from asp import parse_toml
+from params import parse_params
 
-PROJECT = parse_toml(os.path.join(os.path.dirname(__file__), "../pyproject.toml"))
+PROJECT = parse_params(os.path.join(os.path.dirname(__file__), "../pyproject.toml"))
 VERSION = PROJECT["project"]["version"]
 PRESET_FOLDER = "presets"
 
@@ -54,15 +54,19 @@ class Preset:
 def generate_toml(preset, path=None):
     if preset is None:
         preset = "default"
-    logger.info("Using preset: {}".format(preset))
-    target = path if type(path) is str and path is not None else "./aspeo.toml"
+    target = "aspeo.toml"
+    if path is not None:
+        if os.path.isdir(path):
+            target = os.path.join(path, target)
+        else:
+            if os.path.isfile(path):
+                logger.info(f"Overwriting file {path}")
+            target = path
 
     preset = Preset(preset)
-    print(preset.path(), target)
     copyfile(preset.path(), target)
-    print(target)
     write_version(target)
-    logger.info("Successfully wrote {} in the working directory!".format(target))
+    print("Write preset {} at: {}".format(preset.preset, target))
 
 
 def write_version(file):

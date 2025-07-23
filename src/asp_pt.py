@@ -18,8 +18,9 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import stereo, corr_eval, parse_toml, BLACK_LEFT, BLACK_RIGHT, image_align
+from asp import stereo, corr_eval, BLACK_LEFT, BLACK_RIGHT, image_align
 from params import (
+    parse_params,
     get_sources,
     get_pairs,
     source_from_id,
@@ -45,7 +46,7 @@ def corr_eval_ncc(stereo_output: str, params: dict, debug=False):
 
 
 def pixel_tracking(params: dict, debug=False):
-    """Pixel tracking sequence using stereo"""
+    """Beginning Pixel Tracking sequence """
     logger.info("Initializing pixel tracking")
     output_dir = params.get("output", ".")
     sources = get_sources(params, first=2)
@@ -107,5 +108,5 @@ if __name__ == "__main__":
     toml = arguments["<toml>"]
     debug = arguments["--debug"]
 
-    params = parse_toml(toml)
+    params = parse_params(toml)
     pixel_tracking(params, debug=debug)

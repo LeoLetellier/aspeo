@@ -1,0 +1,38 @@
+# ASPeo PARAMETER FILE (v0.2.0)
+name = "Example Pleiades MP"
+description = ""
+output = "."
+dem = "dem.tif"
+src-folder = "ARCHIVES/"
+pairs = "pairs.txt"
+pleiades-prefix = "aqu-"
+pleiades-suffix = "-folder"
+mp-pan = 1
+
+[[source]]
+id = "2021_forward"
+pleiades = "512-1"
+
+[[source]]
+id = "2021_backward"
+pleiades = "512-2"
+
+[[source]]
+id = "2021_nadir"
+pleiades = "512-3"
+
+[bundle-adjust]
+
+[map-project]
+
+[stereo]
+yummy = true
+
+[pc-align]
+dummy = true
+
+[point2dem]
+somy = true
+
+[dem-mosaic]
+cookie = true

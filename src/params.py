@@ -30,16 +30,26 @@ def parse_params(file: str) -> dict:
 
 
 def get_sources(params: dict, first=None) -> list[dict]:
-    """Create the source dict from a file or raw definition"""
+    """Create the source dict from a file or raw definition
+
+    Must be used only once"""
+    root = params["root"]
+    if params.get("pairs", None) is not None:
+        params["pairs"] = os.path.join(root, params["pairs"])
+    if params.get("source", None) is not None and type(params["source"]) is str:
+        params["source"] = os.path.join(root, params["source"])
+
     source = params.get("source", None)
     if params.get("src-folder", None) is not None:
         params["src-folder"] = os.path.abspath(params["src-folder"])
+
     if source is None:
         logger.info("Source is not explicitly described in toml, inferring from pairs")
         pairs = get_pairs(params, first=first)
         ids = ids_from_pairs(pairs)
         source = [{"id": str(i)} for i in ids]
         return extend_paths(source, params)
+
     if type(source) is list:
         logger.info("Source is described directly in toml")
         source_pleiades_autofill(params)
@@ -87,7 +97,6 @@ def get_sources(params: dict, first=None) -> list[dict]:
 def extend_paths(sources: list[dict], params: dict) -> list[dict]:
     """Extend the images paths by adding the optional source folder, prefix and suffix"""
     src_folder = params.get("src-folder", "")
-    root = params["root"]
 
     def extend(key: str):
         pref = params.get(key + "-prefix", "")
@@ -105,11 +114,6 @@ def extend_paths(sources: list[dict], params: dict) -> list[dict]:
 
         for key in KEYS[1:]:
             extend(key)
-
-    if params.get("pairs", None) is not None:
-        params["pairs"] = os.path.join(root, params["pairs"])
-    if type(params["source"]) is str:
-        params["source"] = os.path.join(root, params["source"])
 
     return sources
 
@@ -143,6 +147,9 @@ def get_pairs(
             for p in c:
                 if p not in ids:
                     raise ValueError("Found unknown id in pairs file")
+
+    if len(content) == 0:
+        raise ValueError("Empty pairs")
 
     return content
 
@@ -196,7 +203,11 @@ def get_dim_bbox(dim: str, debug=False) -> list[float]:
     bbox_polygon = root.findall("./Dataset_Content/Dataset_Extent/Vertex")
     bbox_points = []
     for b in bbox_polygon:
-        bbox_points.append([float(b.find("./LON").text), float(b.find("./LAT").text)])
+        lon, lat = b.find("./LON"), b.find("./LAT")
+        if lon is not None and lat is not None:
+            lon, lat = lon.text, lat.text
+            if lon is not None and lat is not None:
+                bbox_points.append([float(lon), float(lat)])
     return points_to_bbox(bbox_points)
 
 
@@ -244,8 +255,8 @@ def source_pleiades_autofill(params: dict, debug=False):
     pref = params.get("pleiades-prefix", "")
     suff = params.get("pleiades-suffix", "")
     for s in params["source"]:
-        pld = pref + s.get("pleiades", None) + suff
-        if pld is not None:
+        if s.get("pleiades", None) is not None:
+            pld = pref + s["pleiades"] + suff
             if not auto_fill:
                 logger.info("Autofill from pleiades folder")
                 auto_fill = True
@@ -255,9 +266,11 @@ def source_pleiades_autofill(params: dict, debug=False):
                 raise ValueError(
                     "pleiades folder is empty (no dim): {}".format(search_pattern)
                 )
-            heart = maybe_dim[0][4:-4]
-            s["dim"] = maybe_dim[0]
-            s["cam"] = "RPC_" + heart + ".XML"
-            s["pan"] = "IMG_" + heart + ".TIF"
+            prepend = os.path.dirname(maybe_dim[0])
+            heart = os.path.basename(maybe_dim[0])[4:-4]
+            s["dim"] = os.path.join(prepend, maybe_dim[0])
+            # s["cam"] = os.path.join(prepend, "RPC_" + heart + ".XML")
+            s["cam"] = s["dim"]
+            s["pan"] = os.path.join(prepend, "IMG_" + heart + ".TIF")
     if not auto_fill:
         logger.info("No autofill from pleiades folder")

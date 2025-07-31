@@ -46,7 +46,7 @@ def corr_eval_ncc(stereo_output: str, params: dict, debug=False):
 
 
 def pixel_tracking(params: dict, debug=False):
-    """Beginning Pixel Tracking sequence """
+    """Beginning Pixel Tracking sequence"""
     logger.info("Initializing pixel tracking")
     output_dir = params.get("output", ".")
     sources = get_sources(params, first=2)

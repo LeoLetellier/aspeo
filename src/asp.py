@@ -30,7 +30,11 @@ def sh(cmd: str, shell=True, debug=False):
 
     if not debug:
         return subprocess.run(
-            cmd, shell=shell, stdout=sys.stdout, stderr=subprocess.STDOUT, env=os.environ
+            cmd,
+            shell=shell,
+            stdout=sys.stdout,
+            stderr=subprocess.STDOUT,
+            env=os.environ,
         )
 
 

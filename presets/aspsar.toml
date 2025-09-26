@@ -1,0 +1,34 @@
+name = "ASPSAR basic preset for SAR imgs"
+description = ""
+output = "."
+src-folder = "./GEOTIFF/"
+mp-suffix = ".VV.mod_log.tif"
+pairs = "./PAIRS/table_pairs.txt"
+pairs-header = true
+
+[stereo]
+# Global parameters
+t = "pinhole"
+alignment-method = "none"
+correlator-mode = true
+threads-multiprocess = 5
+process = 5
+# Stereo parameters
+corr-kernel = [9, 9]
+cost-mode = 4
+stereo-algorithm = "asp_final_mgm"
+subpixel-mode = 4
+subpixel-kernel = [75, 75]
+corr-search = [-10, -10, 10, 10]
+prefilter-mode = 1
+prefilter-kernel-width = 30
+corr-blob-filter = 9
+# Post-stereo filtering parameters
+median-filter-size = 3
+texture-smooth-size = 11
+texture-smooth-scale = 0.13
+edge-buffer-size = 5
+erode-max-size = 5
+
+# Generate ncc files
+[corr-eval]

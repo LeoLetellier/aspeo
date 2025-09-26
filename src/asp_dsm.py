@@ -97,9 +97,6 @@ def run_stereo(pairs, sources, fragment, params, debug):
             src3 = source_from_id(id3, sources)
             mps.append(src3["mp"])
             cams.append(src3["cam"])
-
-        if "stop-point" in params["stereo"]:
-            params["stereo"].pop("stop-point")
         stereo(mps, cams, fragment[i], params, debug=debug, dem=params["dem"])
 
 

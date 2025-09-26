@@ -13,7 +13,7 @@ BLACK_RIGHT = os.path.join(
 )
 
 
-def sh(cmd: str, shell=True, debug=False):
+def sh(cmd: str, shell: bool = True, debug: bool = False):
     """
     Launch a shell command
 
@@ -78,7 +78,7 @@ def format_dict(dic: dict) -> str:
 
 def stereo(
     images: list[str],
-    cameras: list[str],
+    cameras: list[str] | None,
     output: str,
     parameters: dict,
     dem: str | None = None,
@@ -86,15 +86,20 @@ def stereo(
 ):
     """Launch a parallel_stereo (ASP) based on a parameter dict
 
-    If debug is used, print the command without launching it. Useful to show the command
-    even without the ASP binaries available
+    If no cameras are provided, it launches in correlator mode (no triangulation)
     """
     params = format_dict(parameters["stereo"])
     dem = "" if dem is None else dem
 
-    cmd = "parallel_stereo {} {} {} {} {}".format(
-        params, arg_to_str(images), arg_to_str(cameras), output, dem
-    )
+    if cameras is None:
+        # Cannot do triangulation with no camera, so only disparity
+        cmd = "parallel_stereo --correlator-mode {} {} {} {}".format(
+            params, arg_to_str(images), output, dem
+        )
+    else:
+        cmd = "parallel_stereo {} {} {} {} {}".format(
+            params, arg_to_str(images), arg_to_str(cameras), output, dem
+        )
 
     sh(cmd, debug=debug)
 

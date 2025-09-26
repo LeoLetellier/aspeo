@@ -65,7 +65,8 @@ Each source image is defined separately. For stereo, pairs must be indicated. Th
 
 If map-projected images are present in the `./MP/PAN/` folder, they will be automatically added to the corresponding source dataset. This allows successive launch of the map-projection and stereo commands.
 
-These behaviours can be checked in the script `./src/params.py`.
+> [!TIP]
+> These behaviours can be checked in the script `./src/params.py`.
 
 ## Map Projection
 
@@ -88,7 +89,8 @@ For more detailled processing, additionnal steps can be used:
 - `pansharp`: Pansharpening (GDAL) uses the P data (with better resolution) as additionnal information for resampling MS data pto this better resolution
 - `orbitviz`: Generate a kml to visualize the orbit and camera position during the acquisition
 
-Check the `mp_pleiades` preset for additionnal information.
+> [!TIP]
+> Check the `mp_pleiades` preset for additionnal information.
 
 ## Pixel tracking
 
@@ -105,7 +107,8 @@ For more detailled processing, additionnal steps can be used:
 - **stereo**: using `correlator-mode`
 - `corr-eval`: Computing the normalized cross correlation metrics (NCC) for each pixel given the resulting disparities for the input images
 
-Check the `pt_pleiades` preset for additionnal information.
+> [!TIP]
+> Check the `pt_pleiades` preset for additionnal information.
 
 ## DSM generation
 
@@ -118,7 +121,8 @@ For more detailled processing, additionnal steps can be used:
 - `point2dem`: Sample the resulting point cloud to generate a raster DSM (one value per pixel)
 - `dem-mosaic`: Merge multiple raster DSM and smooth overlapping areas to produce a unique global raster DSM
 
-Check the `dsm_pleiades` preset for additionnal information.
+> [!TIP]
+> Check the `dsm_pleiades` preset for additionnal information.
 
 ## Miscellaneous
 

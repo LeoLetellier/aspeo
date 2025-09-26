@@ -59,14 +59,18 @@ def pixel_tracking(params: dict, debug=False):
     if sources is None:
         raise ValueError("No map projected images defined or no previous mp run found")
     aligned = None
+    if params.get("force", False):
+        logger.info("Force mode: every pair will be recomputed even if already exists")
 
     if "align" in params.keys():
+        raise NotImplementedError("feature might not be kept")
         logger.info("Launching image alignment")
         aligned = {sources[0]["id"]: DIR_ALIGNED + os.path.basename(sources[0]["mp"])}
         if not debug:
             copyfile(sources[0]["mp"], DIR_ALIGNED + os.path.basename(sources[0]["mp"]))
 
         for s in sources[1:]:
+            output = os.path.join(output_dir, DIR_ALIGNED + os.path.basename(s["mp"]))
             image_align(
                 sources[0]["mp"],
                 s["mp"],
@@ -83,15 +87,16 @@ def pixel_tracking(params: dict, debug=False):
             logger.debug("Stereo pair: {} - {}".format(id1, id2))
             src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
             if aligned is not None:
-                pans = [aligned[id1], aligned[id2]]
+                imgs = [aligned[id1], aligned[id2]]
             else:
-                pans = [src1["mp"], src2["mp"]]
-            cams = [src1.get("cam", BLACK_LEFT), src2.get("cam", BLACK_RIGHT)]
+                imgs = [src1["mp"], src2["mp"]]
             output = os.path.join(
                 output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO
             )
-            params["stereo"]["stop-point"] = 5
-            stereo(pans, cams, output, params, debug=debug)
+            if not os.path.isdir(output) or params.get("force", False):
+                stereo(imgs, None, output, params, debug=debug)
+            else:
+                logger.info(f"Skipping (already exists): {id1}-{id2}")
 
     if "corr-eval" in params.keys():
         logger.info("Launching correlation evaluation (ncc)")
@@ -100,7 +105,10 @@ def pixel_tracking(params: dict, debug=False):
             output = os.path.join(
                 output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO
             )
-            corr_eval_ncc(output, params, debug=debug)
+            if not os.path.isfile(output + "-ncc.tif") or params.get("force", False):
+                corr_eval_ncc(output, params, debug=debug)
+            else:
+                logger.info(f"Skipping NCC (already exists): {id1}-{id2}")
 
 
 if __name__ == "__main__":

@@ -7,8 +7,6 @@ src-folder = "raw_folder/"
 mp-prefix = "pref_"
 mp-suffix = "_suff.file"
 
-# [align]
-
 [stereo]
 t = "nadirpinhole"
 individually-normalize = true
@@ -22,6 +20,5 @@ cost-mode = 3
 stereo-algorithm = "asp_final_mgm"
 subpixel-mode = 11
 subpixel-kernel = [5, 5]
-# stop-point = 5
 
 [corr-eval]

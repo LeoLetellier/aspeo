@@ -3,31 +3,33 @@ description = "Desc"
 output = "."
 dem = "dem"
 src-folder = "source"
-pan-prefix = "IMG_"
+pan-prefix = "IMG_P/IMG_"
 pan-suffix = "-1.tif"
-# pairs = "example/pairs.txt"
-# pairs-header = true
-derive-pan = true
+ms-prefix = "IMG_MS/IMG_"
+ms-suffix = "-1.tif"
 mp-pan = 0.7
 mp-ms = 2
 
 [[source]]
 id = "date1"
-cam = "cam1.xml"
 pan = "pan1"
+cam = "cam1.xml"
 ms = "ms1"
 cam-ms = "mscam"
 
 [[source]]
 id = "date2"
-cam = "cam2.xml"
 pan = "pan2"
+cam = "cam2.xml"
 ms = "ms2"
 cam-ms = "mscam2"
 
 [bundle-adjust]
+threads = 5
 
 [map-project]
+threads = 5
+t_srs = "EPSG:XXXXX"
 
 [pansharpening]
 

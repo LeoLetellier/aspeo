@@ -1,29 +1,18 @@
 name = "Name"
 description = "Desc"
 output = "."
-src-folder = "source"
-pan-prefix = "IMG_"
-pan-suffix = "-1.tif"
-pairs = "example/pairs2.txt"
-pairs-header = false
-src_folder = "raw_folder/"
+src-folder = "/folder/source"
 mp_prefix = "pref_"
 mp_suffix = "_suff.file"
-derive-pan = true
+pairs = "pairs_pt.txt"
 
 [[source]]
 id = "date1"
-cam = "cam1.xml"
-pan = "pan1"
-ms = "ms1"
-cam-ms = "mscam"
+mp = "mp1"
 
 [[source]]
 id = "date2"
-cam = "cam2.xml"
-pan = "pan2"
-ms = "ms2"
-cam-ms = "mscam2"
+mp = "mp2"
 
 [stereo]
 t = "nadirpinhole"
@@ -38,6 +27,5 @@ cost-mode = 3
 stereo-algorithm = "asp_final_mgm"
 subpixel-mode = 11
 subpixel-kernel = [5, 5]
-# stop-point = 5
 
 [corr-eval]

@@ -7,7 +7,7 @@ pairs = "./PAIRS/table_pairs.txt"
 pairs-header = true
 
 [stereo]
-# Global parameters
+# Global ASP parameters for stereo
 t = "pinhole"
 alignment-method = "none"
 correlator-mode = true

@@ -17,7 +17,15 @@ Options:
 """
 
 from asp import map_project, bundle_adjust, gdal_pansharp, orbit_viz, sh
-from params import get_sources, parse_params, retrieve_max2p_bbox
+from params import (
+    get_sources,
+    parse_params,
+    retrieve_max2p_bbox,
+    retrieve_dem,
+    get_pairs,
+    ids_from_source,
+    source_from_id,
+)
 from params import DIR_BA, DIR_MP_PAN, DIR_MP_MS, DIR_PANSHARP
 import os
 import docopt
@@ -28,9 +36,14 @@ logger = logging.getLogger(__name__)
 
 
 def map_projection(params: dict, debug=False):
+    """Core function for the Map projection Workflow"""
     logger.info("Beginning Map Projection sequence")
     output_dir = params.get("output", ".")
     sources = get_sources(params)
+    if "pairs" in params:
+        pairs = get_pairs(params, ids_from_source(sources))
+    else:
+        pairs = None
     output_ba = os.path.join(output_dir, DIR_BA)
     output_mp_pan = os.path.join(output_dir, DIR_MP_PAN)
     output_mp_ms = os.path.join(output_dir, DIR_MP_MS)
@@ -52,12 +65,10 @@ def map_projection(params: dict, debug=False):
 
     if "bundle-adjust" in params.keys():
         logger.info("Bundle adjust")
-        imgs = [s["pan"] for s in sources]
-        cams = [s["cam"] for s in sources]
-        parallel = len(imgs) > 3
-        bundle_adjust(imgs, cams, output_ba, params, parallel=parallel, debug=debug)
+        run_ba(sources, pairs, params, output_ba, debug=debug)
+
         params["map-project"]["bundle-adjust-prefix"] = output_ba
-    elif os.path.isdir(output_ba):
+    elif os.path.isdir(output_dir + "/BA/"):
         params["map-project"]["bundle-adjust-prefix"] = output_ba
 
     if mp_pan is not None:
@@ -96,30 +107,28 @@ def map_projection(params: dict, debug=False):
         orbit_viz(imgs, cams, output_dir + "/orbits.kml", params, debug=debug)
 
 
-def retrieve_dem(params: dict, debug=False) -> str:
-    bbox = retrieve_max2p_bbox(params)
-    long1, long2, lat1, lat2 = bbox[0], bbox[1], bbox[2], bbox[3]
-    output = params.get("output", ".")
-    dst = os.path.join(
-        output,
-        "cop_dem30_{}_{}_{}_{}".format(int(long1), int(long2), int(lat1), int(lat2)),
-    )
-
-    cmd1 = "my_getDemFile.py -s COP_DEM --bbox={},{},{},{} -c /data/ARCHIVES/DEM/COP-DEM_GLO-30-DTED/DEM".format(
-        long1, long2, lat1, lat2
-    )
-    cmd2 = "gdal_translate -of Gtiff {} {}".format(dst + ".dem", dst + ".tif")
-    if not debug:
-        sh(cmd1)
-        sh(cmd2)
-
-        os.remove(dst + ".dem")
-        os.remove(dst + ".dem.aux.xml")
-        os.remove(dst + ".dem.rsc")
+def run_ba(sources, pairs, params, output_ba, debug=False):
+    """Bundle Adjust handling for pairs without major overlapping"""
+    if pairs is None:
+        # No pairs, do same bundle adjust for all images
+        imgs = [s["pan"] for s in sources]
+        cams = [s["cam"] for s in sources]
+        parallel = len(imgs) > 3
+        bundle_adjust(imgs, cams, output_ba, params, parallel=parallel, debug=debug)
     else:
-        print(cmd1)
-        print(cmd2)
-    return dst + ".tif"
+        # pairs are given, do bundle adjust per pair
+        for p in pairs:
+            id1, id2 = p[0], p[1]
+            src1, src2 = source_from_id(id1, sources), source_from_id(id2, sources)
+            imgs = [src1["pan"], src2["pan"]]
+            cams = [src1["cam"], src2["cam"]]
+
+            if len(p) > 2:
+                id3 = p[2]
+                src3 = source_from_id(id3, sources)
+                imgs.append(src3["pan"])
+                cams.append(src3["cam"])
+                bundle_adjust(imgs, cams, output_ba, params, debug=debug)
 
 
 if __name__ == "__main__":

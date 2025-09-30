@@ -1,4 +1,6 @@
 import os
+import sys
+import subprocess
 import logging
 import glob
 import xml.etree.ElementTree as ET
@@ -16,6 +18,31 @@ DIR_PANSHARP = "MP/PANSHARP/pansharp-"
 DIR_ALIGNED = "MP/ALIGNED/align-"
 DIR_STEREO = "STEREO/"
 PREF_STEREO = "stereo"
+
+
+def sh(cmd: str, shell: bool = True, debug: bool = False):
+    """
+    Launch a shell command
+
+    As shell=True, all single call is made in a separate shell
+
+    # Example
+
+    ````
+    sh("ls -l | wc -l")
+    ````
+
+    """
+    logger.info(">> " + cmd)
+
+    if not debug:
+        return subprocess.run(
+            cmd,
+            shell=shell,
+            stdout=sys.stdout,
+            stderr=subprocess.STDOUT,
+            env=os.environ,
+        )
 
 
 def parse_params(file: str) -> dict:
@@ -272,5 +299,43 @@ def source_pleiades_autofill(params: dict, debug=False):
             # s["cam"] = os.path.join(prepend, "RPC_" + heart + ".XML")
             s["cam"] = s["dim"]
             s["pan"] = os.path.join(prepend, "IMG_" + heart + ".TIF")
+            if not os.path.isfile(s["pan"]):
+                pleiades_source_virtual(os.path.join(src, pld), s["pan"])
     if not auto_fill:
         logger.info("No autofill from pleiades folder")
+
+
+def pleiades_source_virtual(folder, target, debug=False):
+    search_pattern_tif = "IMG*_R*C*.TIF"
+    search_pattern_jp2 = "IMG*_R*C*.JP2"
+    img_files = glob.glob(search_pattern_tif) + glob.glob(search_pattern_jp2)
+
+    cmd = "gdalbuildvrt {} {}".format(target, " ".join(img_files))
+
+    sh(cmd, debug=debug)
+
+
+def retrieve_dem(params: dict, debug=False) -> str:
+    bbox = retrieve_max2p_bbox(params)
+    long1, long2, lat1, lat2 = bbox[0], bbox[1], bbox[2], bbox[3]
+    output = params.get("output", ".")
+    dst = os.path.join(
+        output,
+        "cop_dem30_{}_{}_{}_{}".format(int(long1), int(long2), int(lat1), int(lat2)),
+    )
+
+    cmd1 = "my_getDemFile.py -s COP_DEM --bbox={},{},{},{} -c /data/ARCHIVES/DEM/COP-DEM_GLO-30-DTED/DEM".format(
+        long1, long2, lat1, lat2
+    )
+    cmd2 = "gdal_translate -of Gtiff {} {}".format(dst + ".dem", dst + ".tif")
+    if not debug:
+        sh(cmd1)
+        sh(cmd2)
+
+        os.remove(dst + ".dem")
+        os.remove(dst + ".dem.aux.xml")
+        os.remove(dst + ".dem.rsc")
+    else:
+        print(cmd1)
+        print(cmd2)
+    return dst + ".tif"

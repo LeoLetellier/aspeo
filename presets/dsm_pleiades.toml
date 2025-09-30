@@ -1,48 +1,58 @@
-name = "Name"
-description = "Desc"
+name = "DSM Pleiades Preset"
+description = ""
 output = "."
 dem = "dem"
-src-folder = "source"
-pan-prefix = "IMG_"
-pan-suffix = "-1.tif"
-cam-suffix = ".XML"
-pairs = "example/pairs_dsm.txt"
-pairs-header = true
-derive-pan = true
+src-folder = "/folder/source"
+pairs = "pairs_dsm.txt"
+mp-pan = 0.7
 
 [[source]]
-id = "20210526"
-cam = "20210526"
-mp = "20210526"
+id = "img1"
+pleiades = "f1/IMG_PHR_0/"
 
 [[source]]
-id = "20210527"
-cam = "20210527"
-mp = "20210527"
+id = "img2"
+pleiades = "f2/IMG_PHR_0/"
 
 [[source]]
-id = "20210528"
-cam = "20210528"
-mp = "20210528"
+id = "img3"
+pleiades = "f3/IMG_PHR_0/"
 
 [[source]]
-id = "20230526"
-cam = "20230526"
-mp = "20230526"
+id = "img1_zone2"
+pleiades = "f4/IMG_PHR_0/"
 
 [[source]]
-id = "20250526"
-cam = "20250526"
-mp = "20250526"
+id = "img2_zone2"
+pleiades = "f5/IMG_PHR_0/"
+
+[[source]]
+id = "img3_zone2"
+pleiades = "f6/IMG_PHR_0/"
+
+[bundle-adjust]
+threads = 5
+
+[map-project]
+threads = 5
+t_srs = "EPSG:XXXXX"
 
 [stereo]
-yummy = true
-
-[pc-align]
-dummy = true
+session-type = "pleiades"
+threads-multiprocess = 5
+stereo-algorithm = "asp_final_mgm"
+cost-mode = 4
+subpixel-mode = 11
+corr-kernel = [7, 7]
+subpixel-kernel = [5, 5]
 
 [point2dem]
-somy = true
+median-filter-params = [9, 50]
+dem-hole-fill-len = 200
+erode-length = 0
+nodata-value = 0
+tif-compress = "Deflate"
+max-valid-triangulation-error = 2.0
+remove-outlier-param = [75.0, 3.0]
 
 [dem-mosaic]
-cookie = true

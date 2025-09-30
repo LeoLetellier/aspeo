@@ -1,23 +1,43 @@
-name = "Name"
-description = "Desc"
+name = "Default Preset"
+description = "This preset explicits all possible attributes that can be defined within this file. Remove all unused attributes (also attributes set to false is necessary)"
+# The output folder where ASP results will be computed
 output = "."
+# The dem used for map projection and triangulation
+# If no dem is set, a dem will be fetch using nsbas commands (needs nsbas)
 dem = ""
-# source other than id > -prefix -suffix
-# source = "smthg"
-# source-header = true
+# prefix and suffix can be added this way to all parameters of each source file (excepting id)
+pan-prefix = "smth"
+pan-suffix = "smth"
+# Define sources in a separate file rather than in the parameter file
+source = "smthg"
+# Remove the first line of the separate file
+source-header = true
+# Define pairs in a separate file
 pairs = "pairs.txt"
+# Remove the first line of the separate file
 pairs-header = true
+# Construct the pan image path from src-folder/prefix'id'suffix
 derive-pan = false
+# Set the pan ortho-image resolution here (necessary to run the map-projection for pan images)
 mp-pan = 0.7
+# Set the ms ortho-image resolution here (necessary to run the map-projection for ms images)
 mp-ms = 2
 
+# Define each source in a [[source]] object
 [[source]]
+# The id is the identifier or name of this specific source
 id = "id src" # ["id1", "id2"]
+# Panchromatic image
 pan = ""
+# Camera associated to panchromatic image
 cam = ""
+# Multi-spectral images
 ms = ""
+# Camera associated to multi-spectral image
 cam-ms = ""
+# Map-projected image
 mp = ""
+# Pleiades folder, will auto fetch pan and cam
 pleiades = ""
 
 # bundle_adjust > [MP]

@@ -114,6 +114,10 @@ For more detailled processing, additionnal steps can be used:
 
 Using map-projected images and given their cameras, the 3D position of each pixels can be reconstructed by triangulation after disparity estimation. This produces a Digital Surface Model (DSM).
 
+```bash
+aspeo dsm aspeo.toml
+```
+
 For more detailled processing, additionnal steps can be used:
 
 - **stereo**
@@ -128,7 +132,7 @@ For more detailled processing, additionnal steps can be used:
 
 ### Pléiades folder information
 
-Information (acquisition date, size, ...) about a Pléiades data folder can be retrieved using the following command:
+Information (acquisition date, size, ...) about a Pléiades data folder or DIM file can be retrieved using the following command:
 
 ```bash
 pleiadesinfo folder

@@ -24,6 +24,7 @@ from params import (
     source_from_id,
     check_for_mp,
     retrieve_max2p_bbox,
+    retrieve_dem,
     DIR_STEREO,
     PREF_STEREO,
 )
@@ -98,32 +99,6 @@ def run_stereo(pairs, sources, fragment, params, debug):
             mps.append(src3["mp"])
             cams.append(src3["cam"])
         stereo(mps, cams, fragment[i], params, debug=debug, dem=params["dem"])
-
-
-def retrieve_dem(params: dict, debug=False) -> str:
-    bbox = retrieve_max2p_bbox(params)
-    long1, long2, lat1, lat2 = bbox[0], bbox[1], bbox[2], bbox[3]
-    output = params.get("output", ".")
-    dst = os.path.join(
-        output,
-        "cop_dem30_{}_{}_{}_{}".format(int(long1), int(long2), int(lat1), int(lat2)),
-    )
-
-    cmd1 = "my_getDemFile.py -s COP_DEM --bbox={},{},{},{} -c /data/ARCHIVES/DEM/COP-DEM_GLO-30-DTED/DEM".format(
-        long1, long2, lat1, lat2
-    )
-    cmd2 = "gdal_translate -of Gtiff {} {}".format(dst + ".dem", dst + ".tif")
-    if not debug:
-        sh(cmd1)
-        sh(cmd2)
-
-        os.remove(dst + ".dem")
-        os.remove(dst + ".dem.aux.xml")
-        os.remove(dst + ".dem.rsc")
-    else:
-        print(cmd1)
-        print(cmd2)
-    return dst + ".tif"
 
 
 if __name__ == "__main__":

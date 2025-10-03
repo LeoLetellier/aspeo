@@ -63,6 +63,7 @@ def dsm_generation(params: dict, debug=False):
 
     logger.info("working with {} fragments".format(len(fragment)))
 
+    pc_suffix = "-PC.tif"
     if "stereo" in params.keys():
         run_stereo(pairs, sources, fragment, params, debug=debug)
 
@@ -70,17 +71,18 @@ def dsm_generation(params: dict, debug=False):
         logger.info("align fragments")
         for f in fragment:
             pc_align(
-                params["dem"], f + "-pc.tif", f + "-pc_aligned.tif", params, debug=debug
+                params["dem"], f + pc_suffix, f + "-PC_aligned.tif", params, debug=debug
             )
+        pc_suffix = "-PC_aligned.tif"
 
     if "point2dem" in params.keys():
         logger.info("rasterize fragments")
         for f in fragment:
-            point2dem(f + "-pc_aligned.tif", f + "-dem.tif", params, debug=debug)
+            point2dem(f + pc_suffix, f, params, debug=debug)
 
     if "dem-mosaic" in params.keys():
         logger.info("merge fragments")
-        dems = [f + "-dem.tif" for f in fragment]
+        dems = [f + "-DEM.tif" for f in fragment]
         output = output_dir + "/dem.tif"
         dem_mosaic(dems, output, params, debug=debug)
 

@@ -18,7 +18,7 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import stereo, corr_eval, BLACK_LEFT, BLACK_RIGHT, image_align
+from asp import stereo, corr_eval, image_align
 from params import (
     parse_params,
     get_sources,

@@ -5,13 +5,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-BLACK_LEFT = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "assets", "black_left.tsai"
-)
-BLACK_RIGHT = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "assets", "black_right.tsai"
-)
-
 
 def sh(cmd: str, shell: bool = True, debug: bool = False):
     """

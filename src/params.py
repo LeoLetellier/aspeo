@@ -182,6 +182,7 @@ def get_pairs(
 
 
 def make_full_pairs(ids: list[str]) -> list[list[str]]:
+    """Construct all possible pairs"""
     pairs = []
     for i in range(len(ids) - 1):
         for j in range(i + 1, len(ids)):
@@ -198,6 +199,7 @@ def ids_from_pairs(pairs: list[list[str]]) -> list[str]:
 
 
 def ids_from_source(source: list[dict]) -> list[str]:
+    """Get all the ids of the files in source"""
     ids = [s["id"] for s in source]
     return ids
 
@@ -251,6 +253,7 @@ def points_to_bbox(points: list):
 
 
 def retrieve_max2p_bbox(params: dict, debug=False) -> list:
+    """Estimate the global bbox for all Pleiades images"""
     all_bbox = []
     for s in params["source"]:
         if s.get("dim", None) is not None:
@@ -277,6 +280,7 @@ def retrieve_max2p_bbox(params: dict, debug=False) -> list:
 
 
 def source_pleiades_autofill(params: dict, debug=False):
+    """Construct the sources by fetching the files in the distributed pleiades folder"""
     src = params.get("src-folder", "")
     auto_fill = False
     pref = params.get("pleiades-prefix", "")
@@ -296,8 +300,7 @@ def source_pleiades_autofill(params: dict, debug=False):
             prepend = os.path.dirname(maybe_dim[0])
             heart = os.path.basename(maybe_dim[0])[4:-4]
             s["dim"] = os.path.join(prepend, maybe_dim[0])
-            # s["cam"] = os.path.join(prepend, "RPC_" + heart + ".XML")
-            s["cam"] = s["dim"]
+            s["cam"] = os.path.join(prepend, "RPC_" + heart + ".XML")
             s["pan"] = os.path.join(prepend, "IMG_" + heart + ".TIF")
             if not os.path.isfile(s["pan"]):
                 pleiades_source_virtual(os.path.join(src, pld), s["pan"])
@@ -306,6 +309,7 @@ def source_pleiades_autofill(params: dict, debug=False):
 
 
 def pleiades_source_virtual(folder, target, debug=False):
+    """Generate a virtual raster upon pleiades tiles in the distributed folder"""
     search_pattern_tif = "IMG*_R*C*.TIF"
     search_pattern_jp2 = "IMG*_R*C*.JP2"
     img_files = glob.glob(search_pattern_tif) + glob.glob(search_pattern_jp2)
@@ -316,6 +320,7 @@ def pleiades_source_virtual(folder, target, debug=False):
 
 
 def retrieve_dem(params: dict, debug=False) -> str:
+    """Retrieve a DEM on the image region using NSBAS command `my_getDemFile.py`"""
     bbox = retrieve_max2p_bbox(params)
     long1, long2, lat1, lat2 = bbox[0], bbox[1], bbox[2], bbox[3]
     output = params.get("output", ".")

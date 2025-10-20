@@ -14,11 +14,11 @@ correlator-mode = true
 threads-multiprocess = 5
 process = 5
 # Stereo parameters
-corr-kernel = [9, 9]
+corr-kernel = [7, 7]
 cost-mode = 4
 stereo-algorithm = "asp_final_mgm"
-subpixel-mode = 4
-subpixel-kernel = [75, 75]
+subpixel-mode = 11
+subpixel-kernel = [5, 5]
 corr-search = [-10, -10, 10, 10]
 prefilter-mode = 0
 corr-blob-filter = 9

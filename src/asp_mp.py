@@ -16,21 +16,26 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import map_project, bundle_adjust, gdal_pansharp, orbit_viz, sh
+import logging
+import os
+from copy import deepcopy
+
+import docopt
+
+from asp import bundle_adjust, gdal_pansharp, map_project, orbit_viz, sh
 from params import (
-    get_sources,
-    parse_params,
-    retrieve_max2p_bbox,
-    retrieve_dem,
+    DIR_BA,
+    DIR_MP_MS,
+    DIR_MP_PAN,
+    DIR_PANSHARP,
     get_pairs,
+    get_sources,
     ids_from_source,
+    parse_params,
+    retrieve_dem,
+    retrieve_max2p_bbox,
     source_from_id,
 )
-from params import DIR_BA, DIR_MP_PAN, DIR_MP_MS, DIR_PANSHARP
-import os
-import docopt
-from copy import deepcopy
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +70,8 @@ def map_projection(params: dict, debug=False):
 
     if "bundle-adjust" in params.keys():
         logger.info("Bundle adjust")
-        run_ba(sources, pairs, params, output_ba, debug=debug)
+        if not os.path.isdir(output_ba) or params.get("force", False):
+            run_ba(sources, pairs, params, output_ba, debug=debug)
 
         params["map-project"]["bundle-adjust-prefix"] = output_ba
     elif os.path.isdir(output_dir + "/BA/"):
@@ -77,7 +83,10 @@ def map_projection(params: dict, debug=False):
         mp_params["map-project"]["tr"] = mp_pan
         for s in sources:
             output = output_mp_pan + s["id"] + ".tif"
-            map_project(dem, s["pan"], s["cam"], output, mp_params, debug=debug)
+            if not os.path.isfile(output) or params.get("force", False):
+                map_project(dem, s["pan"], s["cam"], output, mp_params, debug=debug)
+            else:
+                logger.info(f"Skipping (already exists): {s['id']}")
         del mp_params
 
     if mp_ms is not None and got_ms:
@@ -86,7 +95,10 @@ def map_projection(params: dict, debug=False):
         ms_params["map-project"]["tr"] = mp_ms
         for s in sources:
             output = output_mp_ms + s["id"] + ".tif"
-            map_project(dem, s["ms"], s["cam-ms"], output, ms_params, debug=debug)
+            if not os.path.isfile(output) or params.get("force", False):
+                map_project(dem, s["ms"], s["cam-ms"], output, ms_params, debug=debug)
+            else:
+                logger.info(f"Skipping (already exists): {s['id']}")
         del ms_params
 
     if "pansharpening" in params.keys():

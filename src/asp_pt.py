@@ -18,21 +18,25 @@ Options:
     <toml>          ASPeo parameter file
 """
 
-from asp import stereo, corr_eval, image_align
-from params import (
-    parse_params,
-    get_sources,
-    get_pairs,
-    source_from_id,
-    ids_from_source,
-    make_full_pairs,
-    check_for_mp,
-)
-from params import DIR_STEREO, PREF_STEREO, DIR_ALIGNED
+import logging
 import os
 from shutil import copyfile
+
 import docopt
-import logging
+
+from asp import corr_eval, image_align, stereo
+from params import (
+    DIR_ALIGNED,
+    DIR_STEREO,
+    PREF_STEREO,
+    check_for_mp,
+    get_pairs,
+    get_sources,
+    ids_from_source,
+    make_full_pairs,
+    parse_params,
+    source_from_id,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +97,11 @@ def pixel_tracking(params: dict, debug=False):
             output = os.path.join(
                 output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO
             )
-            if not os.path.isdir(output) or params.get("force", False):
+            outfile = os.path.join(
+                output_dir, DIR_STEREO, id1 + "_" + id2 + "/" + PREF_STEREO + "-F.tif"
+            )
+            # if not os.path.isdir(output) or params.get("force", False):
+            if not os.path.isfile(outfile) or params.get("force", False):
                 stereo(imgs, None, output, params, debug=debug)
             else:
                 logger.info(f"Skipping (already exists): {id1}-{id2}")

@@ -1,11 +1,12 @@
-import os
-import sys
-import subprocess
-import logging
 import glob
+import logging
+import os
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
-import tomli
+
 import numpy as np
+import tomli
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +174,7 @@ def get_pairs(
         for c in content:
             for p in c:
                 if p not in ids:
-                    raise ValueError("Found unknown id in pairs file")
+                    raise ValueError("Found unknown id in pairs file:", p)
 
     if len(content) == 0:
         raise ValueError("Empty pairs")
@@ -310,8 +311,8 @@ def source_pleiades_autofill(params: dict, debug=False):
 
 def pleiades_source_virtual(folder, target, debug=False):
     """Generate a virtual raster upon pleiades tiles in the distributed folder"""
-    search_pattern_tif = "IMG*_R*C*.TIF"
-    search_pattern_jp2 = "IMG*_R*C*.JP2"
+    search_pattern_tif = os.path.join(folder, "IMG*_R*C*.TIF")
+    search_pattern_jp2 = os.path.join(folder, "IMG*_R*C*.JP2")
     img_files = glob.glob(search_pattern_tif) + glob.glob(search_pattern_jp2)
 
     cmd = "gdalbuildvrt {} {}".format(target, " ".join(img_files))

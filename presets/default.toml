@@ -22,6 +22,7 @@ derive-pan = false
 mp-pan = 0.7
 # Set the ms ortho-image resolution here (necessary to run the map-projection for ms images)
 mp-ms = 2
+correct-corr-search = true
 
 # Define each source in a [[source]] object
 [[source]]

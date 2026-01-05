@@ -102,7 +102,10 @@ def pixel_tracking(params: dict, debug=False):
             )
             # if not os.path.isdir(output) or params.get("force", False):
             if not os.path.isfile(outfile) or params.get("force", False):
-                stereo(imgs, None, output, params, debug=debug)
+                use_params = params
+                if params.get("correct-corr-search", False):
+                    use_params = correct_corr_search(params.copy(), imgs)
+                stereo(imgs, None, output, use_params, debug=debug)
             else:
                 logger.info(f"Skipping (already exists): {id1}-{id2}")
 
@@ -117,6 +120,20 @@ def pixel_tracking(params: dict, debug=False):
                 corr_eval_ncc(output, params, debug=debug)
             else:
                 logger.info(f"Skipping NCC (already exists): {id1}-{id2}")
+
+
+def correct_corr_search(params, src1, src2):
+    res = params["mp-pan"]
+    delta_ulx = (src1["ulx"] - src2["ulx"]) / res
+    delta_uly = (src1["uly"] - src2["uly"]) / res
+    corr_search = params["stereo"]["corr-search"]
+    params["stereo"]["corr-search"] = [
+        corr_search[0] - delta_ulx,
+        corr_search[0] - delta_ulx,
+        corr_search[1] - delta_uly,
+        corr_search[1] - delta_uly,
+    ]
+    return params
 
 
 if __name__ == "__main__":

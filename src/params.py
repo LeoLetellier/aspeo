@@ -92,6 +92,9 @@ def get_sources(params: dict, first=None) -> list[dict]:
         raise ValueError("Source file contain non consistent lines")
     if len(content[0]) == 0:
         raise ValueError("Source file is empty")
+    elif len(content[0]) == 1:
+        source = [{"id": str(c[0])} for c in content]
+        return extend_paths(source, params)
 
     key_index = {}
     if params.get("source-header", False):

@@ -88,7 +88,7 @@ class PleiadesDisplay:
         self.cloud = self.get("./Dataset_Content/CLOUD_COVERAGE")
         self.snow = self.get("./Dataset_Content/SNOW_COVERAGE")
         self.crs = None
-        self.acqu_angles = None
+        self.acqu_angles = self.get_aquisition_angles()
         self.solar_inc = None
         self.gsd = None
         self.bound_geom, self.bound_coord = self.get_geom()
@@ -111,6 +111,20 @@ class PleiadesDisplay:
         coordxy = [[v.find(".COL").text, v.find(".ROW").text] for v in vertex]
         return latlon, coordxy
 
+    def get_aquisition_angles(self):
+        geom_values = self.dim.findall("./Geometric_Data/Use_Area/Located_Geometric_Values")
+        if geom_values is not None:
+            for g in geom_values:
+                if g.find(".LOCATION_TYPE").text == "Center":
+                    geom_values = g
+                    break
+        if geom_values is None:
+            return None
+        azimuth = geom_values.find(".Acquisition_Angles/AZIMUTH_ANGLE").text
+        incidence_across_track = geom_values.find(".Acquisition_Angles/INCIDENCE_ANGLE_ACROSS_TRACK").text
+        incidence_along_track = geom_values.find(".Acquisition_Angles/INCIDENCE_ANGLE_ALONG_TRACK").text
+        return float(incidence_across_track), float(incidence_along_track), float(azimuth)
+
     def display(self):
         message = "Pleiadesinfo: {}\n\n".format(self.dataset_name)
         message += "date: {} {}\n".format(self.imaging_date, self.imaging_time)
@@ -119,6 +133,7 @@ class PleiadesDisplay:
         message += "datatype: {} {} {}\n".format(self.data_type, self.nbits, self.sign)
         message += "Bounding polygon: {}".format(display_geom(self.bound_geom))
         message += "                  {}".format(display_geom(self.bound_coord))
+        message += "\nAngles: {}".format(self.acqu_angles)
 
         print(message)
 

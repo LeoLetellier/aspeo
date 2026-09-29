@@ -140,7 +140,8 @@ def run_ba(sources, pairs, params, output_ba, debug=False):
                 src3 = source_from_id(id3, sources)
                 imgs.append(src3["pan"])
                 cams.append(src3["cam"])
-                bundle_adjust(imgs, cams, output_ba, params, debug=debug)
+
+            bundle_adjust(imgs, cams, output_ba, params, debug=debug)
 
 
 if __name__ == "__main__":

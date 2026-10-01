@@ -70,21 +70,24 @@ def dsm_generation(params: dict, debug=False):
     if "pc-align" in params.keys():
         logger.info("align fragments")
         for f in fragment:
-            pc_align(
-                params["dem"], f + pc_suffix, f + "-PC_aligned.tif", params, debug=debug
-            )
+            if not os.path.exists(f + "-PC_aligned.tif") or params.get("force", False):
+                pc_align(
+                    params["dem"], f + pc_suffix, f + "-PC_aligned.tif", params, debug=debug
+                )
         pc_suffix = "-PC_aligned.tif"
 
     if "point2dem" in params.keys():
         logger.info("rasterize fragments")
         for f in fragment:
-            point2dem(f + pc_suffix, f, params, debug=debug)
+            if not os.path.exists(f + "-DEM.tif") or params.get("force", False):
+                point2dem(f + pc_suffix, f, params, debug=debug)
 
     if "dem-mosaic" in params.keys():
         logger.info("merge fragments")
         dems = [f + "-DEM.tif" for f in fragment]
         output = output_dir + "/dem.tif"
-        dem_mosaic(dems, output, params, debug=debug)
+        if not os.path.exists(output) or params.get("force", False):
+            dem_mosaic(dems, output, params, debug=debug)
 
 
 def run_stereo(pairs, sources, fragment, params, debug):
@@ -100,7 +103,8 @@ def run_stereo(pairs, sources, fragment, params, debug):
             src3 = source_from_id(id3, sources)
             mps.append(src3["mp"])
             cams.append(src3["cam"])
-        stereo(mps, cams, fragment[i], params, debug=debug, dem=params["dem"])
+        if not os.path.exists(fragment[i] + "-PC.tif") or params.get("force", False):
+            stereo(mps, cams, fragment[i], params, debug=debug, dem=params["dem"])
 
 
 if __name__ == "__main__":

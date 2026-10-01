@@ -53,6 +53,6 @@ erode-length = 0
 nodata-value = 0
 tif-compress = "Deflate"
 max-valid-triangulation-error = 2.0
-remove-outlier-param = [75.0, 3.0]
+remove-outliers-params = [75.0, 3.0]
 
 [dem-mosaic]

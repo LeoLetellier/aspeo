@@ -2,17 +2,24 @@ name = "Name"
 description = "Desc"
 output = "."
 src-folder = "/folder/source"
-mp_prefix = "pref_"
-mp_suffix = "_suff.file"
+dem = "/path/to/dem"
 pairs = "pairs_pt.txt"
+mp-pan = 0.7
 
 [[source]]
 id = "date1"
-mp = "mp1"
+pleiades = "pleiades/folder"
 
 [[source]]
 id = "date2"
-mp = "mp2"
+pleiades = "pleiades/folder"
+
+[bundle-adjust]
+threads = 5
+
+[map-project]
+threads = 5
+t_srs = "EPSG:XXXXX"
 
 [stereo]
 t = "nadirpinhole"
@@ -22,8 +29,8 @@ threads-multiprocess = 5
 process = 5
 no-bigtiff = true
 tif-compress = "Deflate"
-corr-kernel = [9, 9]
-cost-mode = 3
+corr-kernel = [7, 7]
+cost-mode = 4
 stereo-algorithm = "asp_final_mgm"
 subpixel-mode = 11
 subpixel-kernel = [5, 5]

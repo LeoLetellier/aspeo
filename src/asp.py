@@ -211,7 +211,7 @@ def orbit_viz(
     sh(cmd, debug=debug)
 
 
-def gdal_crop(input: str, output: str, parameters: dict, debug=False):
+def gdal_translate(input: str, output: str, parameters: dict, debug=False):
     """Use gdal_translate with the crop parameters"""
     params = format_dict(parameters["crop"])
 
